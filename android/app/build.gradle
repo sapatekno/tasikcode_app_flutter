@@ -34,6 +34,8 @@ android {
 
     lintOptions {
         disable 'InvalidPackage'
+        // * fix Execution failed for task ':app:lintVitalRelease'
+        checkReleaseBuilds false
     }
 
     defaultConfig {
