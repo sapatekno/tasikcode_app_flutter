@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
+import 'package:websafe_svg/websafe_svg.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,6 +31,12 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       title: Row(
         children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: WebsafeSvg.asset(
+              MyApps.pathAssetsImages("tcode_logo_small.svg"),
+            ),
+          ),
           Text(
             "Tasik",
             style: GoogleFonts.rubik(
