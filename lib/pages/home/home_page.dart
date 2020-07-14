@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
 import 'package:websafe_svg/websafe_svg.dart';
@@ -14,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   List<Widget> _widgetOptions = <Widget>[
-    Container(child: Center(child: Text('Index 0: Home'))),
+    DashboardPage(),
     Container(child: Center(child: Text('Index 1: Blog'))),
     Container(child: Center(child: Text('Index 2: Event'))),
     Container(child: Center(child: Text('Index 3: Baraya'))),
