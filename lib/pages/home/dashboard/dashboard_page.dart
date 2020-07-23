@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_presenter.dart';
 
-class DashboardPage extends StatefulWidget {
+class DashboardPage extends BaseStatefulWidget {
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
+class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
     implements DashboardContract {
   DashboardPresenter _presenter;
 
@@ -14,6 +15,9 @@ class _DashboardPageState extends State<DashboardPage>
   void initState() {
     super.initState();
     _presenter = new DashboardPresenter(this);
+    // ignore: invalid_use_of_protected_member
+    _presenter.setView(this);
+    _presenter.samplePresenter();
   }
 
   @override
