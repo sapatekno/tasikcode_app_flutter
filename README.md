@@ -33,5 +33,5 @@ Beberapa Catatan apabila ingin mengembangkan aplikasi ini :
 
 ## Release
 
-v1.0,0 - 2 Oktober 2020
+v1.0.0 - 2 Oktober 2020
     - initial Release
