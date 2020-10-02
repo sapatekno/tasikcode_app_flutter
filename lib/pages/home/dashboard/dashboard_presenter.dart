@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:tasikcode_app_flutter/base/base_presenter.dart';
+import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 
 abstract class DashboardContract extends BaseContract {}
@@ -23,6 +24,22 @@ class DashboardPresenter extends BasePresenter {
       var data = json.decode(response.body);
       List<PostModel> result =
           List<PostModel>.from(data.map((i) => PostModel.fromJson(i)));
+      return result;
+    } else {
+      // error load
+    }
+
+    return null;
+  }
+
+  Future<CategoryModel> getCategory(num categoryID) async {
+    final url =
+        "http://blog.tasikcode.xyz/wp-json/wp/v2/categories/$categoryID";
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      CategoryModel result = CategoryModel.fromJson(data);
       return result;
     } else {
       // error load

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
+import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
@@ -145,18 +146,34 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                               // ! Sementara hanya bisa menampilkan 1 Kategori saja
                               Padding(
                                 padding: EdgeInsets.only(bottom: 8),
-                                child: Text(
-                                  snapshot.data[index].categories.first
-                                      .toString() ??
-                                      "-",
-                                  style: TextStyle(
-                                      fontSize: 12, color: MyColors.grey),
+                                child: FutureBuilder<CategoryModel>(
+                                  future: _presenter.getCategory(
+                                      snapshot.data[index].categories.first ??
+                                          1),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<CategoryModel> snapshot) {
+                                    String childData;
+
+                                    if (snapshot.hasData) {
+                                      childData = snapshot.data.name;
+                                    } else if (snapshot.hasError) {
+                                      childData = "Error";
+                                    } else {
+                                      childData = "-";
+                                    }
+
+                                    return Text(
+                                      childData,
+                                      style: TextStyle(
+                                          fontSize: 12, color: MyColors.grey),
+                                    );
+                                  },
                                 ),
                               ),
                               Text(
                                 snapshot.data[index].date
-                                    .toString()
-                                    .toString() ??
+                                        .toString()
+                                        .toString() ??
                                     "-",
                                 style: TextStyle(
                                     fontSize: 12, color: MyColors.grey),
