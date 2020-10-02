@@ -19,6 +19,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     implements BlogContract {
   BlogPresenter _presenter;
   List<PostModel> _posts = List<PostModel>();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -117,87 +118,117 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   void loadPosts(List<PostModel> posts) {
     setState(() {
       _posts.addAll(posts);
+      setLoading(false);
     });
   }
 
   _postsBody(BuildContext context) {
-    return ListView.builder(
-      primary: false,
-      shrinkWrap: true,
-      itemCount: (_posts.length ?? 0),
-      itemBuilder: (BuildContext context, int index) {
-        String dateFormatted =
-            DateFormat("dd MMMM yyyy").format(_posts[index].date);
+    return isLoading
+        ? _loadingBody(context)
+        : ListView.builder(
+            primary: false,
+            shrinkWrap: true,
+            itemCount: (_posts.length ?? 0),
+            itemBuilder: (BuildContext context, int index) {
+              String dateFormatted =
+                  DateFormat("dd MMMM yyyy").format(_posts[index].date);
 
-        return Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: Container(
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          BlogDetailPage(postData: _posts[index])),
-                );
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: WebsafeSvg.asset(
-                        // ? Masih Bingung Thumbnail Diambil Darimana
-                        MyApps.pathAssetsImages(
-                          "img_placeholder_small.svg",
+              return Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: Container(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                BlogDetailPage(postData: _posts[index])),
+                      );
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: WebsafeSvg.asset(
+                              // ? Masih Bingung Thumbnail Diambil Darimana
+                              MyApps.pathAssetsImages(
+                                "img_placeholder_small.svg",
+                              ),
+                              fit: BoxFit.fitHeight,
+                            ),
+                          ),
                         ),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 24),
-                            child: HtmlWidget(
-                              _posts[index].title.rendered ?? "-",
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 24),
+                                  child: HtmlWidget(
+                                    _posts[index].title.rendered ?? "-",
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
+                                  ),
+                                ),
+                                // ! Sementara hanya bisa menampilkan 1 Kategori saja
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 8),
+                                  child: Text(
+                                    _posts[index]
+                                            .embedded
+                                            .wpTerm
+                                            .first
+                                            .first
+                                            .name ??
+                                        "-",
+                                    style: TextStyle(
+                                        fontSize: 12, color: MyColors.grey),
+                                  ),
+                                ),
+                                Text(
+                                  dateFormatted ?? "-",
+                                  style: TextStyle(
+                                      fontSize: 12, color: MyColors.grey),
+                                ),
+                              ],
                             ),
                           ),
-                          // ! Sementara hanya bisa menampilkan 1 Kategori saja
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 8),
-                            child: Text(
-                              _posts[index].embedded.wpTerm.first.first.name ??
-                                  "-",
-                              style:
-                                  TextStyle(fontSize: 12, color: MyColors.grey),
-                            ),
-                          ),
-                          Text(
-                            dateFormatted ?? "-",
-                            style:
-                                TextStyle(fontSize: 12, color: MyColors.grey),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
+          );
+  }
+
+  @override
+  void setLoading(bool status) {
+    setState(() {
+      isLoading = status;
+    });
+  }
+
+  _loadingBody(BuildContext context) {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: CircularProgressIndicator(
+            backgroundColor: MyColors.bluePrimary,
+            valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

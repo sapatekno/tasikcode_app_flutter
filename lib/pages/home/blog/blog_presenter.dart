@@ -6,6 +6,8 @@ import 'package:tasikcode_app_flutter/model/post_model.dart';
 
 abstract class BlogContract extends BaseContract {
   void loadPosts(List<PostModel> posts);
+
+  void setLoading(bool status);
 }
 
 class BlogPresenter extends BasePresenter {
@@ -14,8 +16,10 @@ class BlogPresenter extends BasePresenter {
   BlogPresenter(this._view);
 
   void getPosts() async {
+    _view.setLoading(true);
+
     String url =
-        "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=5&_embed";
+        "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=20&_embed";
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
