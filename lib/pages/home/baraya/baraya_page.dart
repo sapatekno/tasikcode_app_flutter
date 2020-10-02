@@ -14,14 +14,13 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
   final _key = UniqueKey();
   BarayaPresenter _presenter;
 
-  String _errorMessage;
   String _initialUrl;
   num _stackToView = 1;
 
   @override
   void initState() {
     super.initState();
-    _presenter = new BarayaPresenter(this);
+    // _presenter = new BarayaPresenter(this);
     // ignore: invalid_use_of_protected_member
     _presenter.setView(this);
     _initialUrl = "https://baraya.tasikcode.xyz";
@@ -34,7 +33,6 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
       children: [
         widgetWebview(context),
         widgetLoading(context),
-        widgetError(context),
       ],
     );
   }
@@ -73,34 +71,5 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
     setState(() {
       _stackToView = 0;
     });
-  }
-
-  widgetError(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                "ERROR : ${_errorMessage ?? ""}",
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ),
-          MaterialButton(
-            color: ThemeData.dark().buttonColor,
-            onPressed: () {
-              setState(() {
-                _stackToView = 1;
-              });
-            },
-            child: Text("Refresh"),
-          )
-        ],
-      ),
-    );
   }
 }

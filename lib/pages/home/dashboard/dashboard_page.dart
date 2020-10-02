@@ -5,8 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
-import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
+import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
@@ -118,72 +118,70 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                 return Padding(
                   padding: EdgeInsets.only(bottom: 16),
                   child: Container(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 16),
-                            child: WebsafeSvg.asset(
-                              // ? Masih Bingung Thumbnail Diambil Darimana
-                              MyApps.pathAssetsImages(
-                                "img_placeholder_small.svg",
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BlogDetailPage(
+                                  postData: snapshot.data[index])),
+                        );
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 1,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: WebsafeSvg.asset(
+                                // ? Masih Bingung Thumbnail Diambil Darimana
+                                MyApps.pathAssetsImages(
+                                  "img_placeholder_small.svg",
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 24),
-                                child: HtmlWidget(
-                                  snapshot.data[index].title.rendered ?? "-",
-                                  textStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                ),
-                              ),
-                              // ! Sementara hanya bisa menampilkan 1 Kategori saja
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 8),
-                                child: FutureBuilder<CategoryModel>(
-                                  future: _presenter.getCategory(
-                                      snapshot.data[index].categories.first ??
-                                          1),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<CategoryModel> snapshot) {
-                                    String childData;
-
-                                    if (snapshot.hasData) {
-                                      childData = snapshot.data.name;
-                                    } else if (snapshot.hasError) {
-                                      childData = "Error";
-                                    } else {
-                                      childData = "-";
-                                    }
-
-                                    return Text(
-                                      childData,
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 24),
+                                    child: HtmlWidget(
+                                      snapshot.data[index].title.rendered ??
+                                          "-",
+                                      textStyle: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14),
+                                    ),
+                                  ),
+                                  // ! Sementara hanya bisa menampilkan 1 Kategori saja
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 8),
+                                    child: Text(
+                                      snapshot.data[index].embedded.wpTerm.first
+                                              .first.name ??
+                                          "-",
                                       style: TextStyle(
                                           fontSize: 12, color: MyColors.grey),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  ),
+                                  Text(
+                                    dateFormatted ?? "-",
+                                    style: TextStyle(
+                                        fontSize: 12, color: MyColors.grey),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                dateFormatted ?? "-",
-                                style: TextStyle(
-                                    fontSize: 12, color: MyColors.grey),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
