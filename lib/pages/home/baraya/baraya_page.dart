@@ -20,9 +20,10 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
   @override
   void initState() {
     super.initState();
+    // ! Reserved
     // _presenter = new BarayaPresenter(this);
     // ignore: invalid_use_of_protected_member
-    _presenter.setView(this);
+    // _presenter.setView(this);
     _initialUrl = "https://baraya.tasikcode.xyz";
   }
 
