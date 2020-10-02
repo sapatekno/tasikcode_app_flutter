@@ -12,7 +12,7 @@ class BarayaPage extends BaseStatefulWidget {
 class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
     implements BarayaContract {
   final _key = UniqueKey();
-  BarayaPresenter _presenter;
+  // BarayaPresenter _presenter;
 
   String _initialUrl;
   num _stackToView = 1;

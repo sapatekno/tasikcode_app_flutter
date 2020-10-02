@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tasikcode_app_flutter/pages/home/baraya/baraya_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/blog/blog_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _widgetOptions = <Widget>[
     DashboardPage(),
-    Container(child: Center(child: Text('Index 1: Blog'))),
+    BlogPage(),
     Container(
       child: Center(
         child: Row(
@@ -94,6 +95,7 @@ class _HomePageState extends State<HomePage> {
     TextStyle _labelStyle = GoogleFonts.montserrat();
 
     return BottomNavigationBar(
+      selectedLabelStyle: _labelStyle,
       type: BottomNavigationBarType.fixed,
       selectedItemColor: MyColors.bluePrimary,
       unselectedItemColor: MyColors.grey,
@@ -102,20 +104,13 @@ class _HomePageState extends State<HomePage> {
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(FontAwesome.home),
-          title: Text("Home", style: _labelStyle),
+          label: "Home",
         ),
         BottomNavigationBarItem(
-          icon: Icon(FontAwesome.newspaper_o),
-          title: Text("Blog", style: _labelStyle),
-        ),
+            icon: Icon(FontAwesome.newspaper_o), label: "Blog"),
         BottomNavigationBarItem(
-          icon: Icon(FontAwesome.calendar_o),
-          title: Text("Event", style: _labelStyle),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(FontAwesome.users),
-          title: Text("Baraya", style: _labelStyle),
-        ),
+            icon: Icon(FontAwesome.calendar_o), label: "Event"),
+        BottomNavigationBarItem(icon: Icon(FontAwesome.users), label: "Baraya"),
       ],
     );
   }
