@@ -10,12 +10,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^0.1.3
-  dio: ^3.0.9
+  cached_network_image: 2.0.0
+  cupertino_icons: ^1.0.0
   flutter_icons: ^1.1.0
+  flutter_widget_from_html_core: 0.4.1
   google_fonts: 1.0.0
-  logging: ^0.11.4
-  websafe_svg: ^1.1.0
+  websafe_svg: 1.1.0
 
 dev_dependencies:
   flutter_test:
