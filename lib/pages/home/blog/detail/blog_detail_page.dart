@@ -9,6 +9,7 @@ import 'package:tasikcode_app_flutter/model/post_model.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 class BlogDetailPage extends BaseStatefulWidget {
@@ -100,7 +101,7 @@ class _BlogDetailPageState
           children: <Widget>[
             HtmlWidget(
               postData.title.rendered ?? "-",
-              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -113,10 +114,22 @@ class _BlogDetailPageState
               padding: EdgeInsets.only(bottom: 16),
               child: Text(
                 "Posted on $dateFormatted by ${postData.embedded.author.first.name}",
-                style: TextStyle(fontSize: 12, color: MyColors.bluePrimary),
+                style: TextStyle(fontSize: 14, color: MyColors.bluePrimary),
               ),
             ),
-            HtmlWidget(postData.content.rendered ?? "-"),
+            HtmlWidget(
+              postData.content.rendered ?? "-",
+              enableCaching: true,
+              textStyle: TextStyle(fontSize: 16, color: Colors.black),
+              hyperlinkColor: MyColors.yellowSecond,
+              onTapUrl: (url) async {
+                if (await canLaunch(url)) {
+                  await launch(url, forceSafariVC: false, forceWebView: false);
+                } else {
+                  print("url - cant open url");
+                }
+              },
+            ),
           ],
         ),
       ),
