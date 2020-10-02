@@ -19,26 +19,7 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _widgetOptions = <Widget>[
     DashboardPage(),
     BlogPage(),
-    Container(
-      child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "Coming ",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
-            ),
-            Text(
-              "Soon",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: MyColors.yellowSecond),
-            ),
-          ],
-        ),
-      ),
-    ),
+    _eventBody(),
     BarayaPage(),
   ];
 
@@ -119,5 +100,41 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  static _eventBody() {
+    return Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            WebsafeSvg.asset(
+              MyApps.pathAssetsImages("tcode_logo_small.svg"),
+              width: 72,
+              height: 72,
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Coming ",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
+                ),
+                Text(
+                  "Soon",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.yellowSecond),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
