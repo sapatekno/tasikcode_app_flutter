@@ -21,6 +21,7 @@ Beberapa Catatan apabila ingin mengembangkan aplikasi ini :
 
 1. Event Page (Masih Bingung)
 2. Thumbnail Dan Image Pada Halaman Utama (Bingung Ambil dari Yang Mana)
+3. Menambahkan CI/CD pada saat naik Ke Master
 
 ## Fitur yang bisa dikembangkan selanjutnya
 
