@@ -1,16 +1,36 @@
 # TasikCode Mobile Apps
 
-Mobile Apps for TasikCode Community
+Aplikasi Mobile Untuk Komunitas TasikCode menggunakan Flutter SDK
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Projek ini menggunakan Flutter SDK.
 
-A few resources to get you started if this is your first Flutter project:
+Beberapa Catatan apabila ingin mengembangkan aplikasi ini :
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+1. Menggunakan Flutter SDK Stable versi 1.22.0, Sangat tidak disarankan menggunakan versi lebih bawah atau diatasnya karena bisa mempengaruhi kompatibilitas Library (kecuali Sekalian Fix Errornya)
+2. Silahkan di fork dan update sesuka hati
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Fitur yang sudah ada
+
+1. Dashboard
+2. Blog dan Blog Detail
+3. Baraya Page (Saat ini masih WebView, belum tau REST APInya)
+
+## Fitur yang belum ada
+
+1. Event Page (Masih Bingung)
+2. Thumbnail Dan Image Pada Halaman Utama (Bingung Ambil dari Yang Mana)
+
+## Fitur yang bisa dikembangkan selanjutnya
+
+1. Menampilkan Komentar Pada detail post
+2. Rewrite CSS yang di tampilkan Pada HTMLPage, masih banyak list yang belum kena CSSnya
+3. Menambahkan Lazy Load dan Pull to refresh pada Blog Page (saat ini belum efektif karena post belum banyak)
+4. Silahkan jika ada yang mau ditambahkan.
+
+
+## Release
+
+v1.0,0 - 2 Oktober 2020
+    - initial Release
