@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
@@ -46,11 +47,11 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
               child: Padding(
                 padding: EdgeInsets.only(bottom: 32),
                 child: FittedBox(
+                  fit: BoxFit.fitWidth,
                   child: SvgPicture.asset(
                     MyApps.pathAssetsImages("img_placeholder_large.svg"),
                     width: 1000,
                   ),
-                  fit: BoxFit.fitHeight,
                 ),
               ),
             ),

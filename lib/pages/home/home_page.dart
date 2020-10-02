@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tasikcode_app_flutter/pages/home/baraya/baraya_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     ),
-    Container(child: Center(child: Text('Index 3: Baraya'))),
+    BarayaPage(),
   ];
 
   @override
