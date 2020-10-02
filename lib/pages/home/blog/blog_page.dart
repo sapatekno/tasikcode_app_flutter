@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
+import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/blog_presenter.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_page.dart';
@@ -19,6 +20,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     implements BlogContract {
   BlogPresenter _presenter;
   List<PostModel> _posts = List<PostModel>();
+  List<CategoryModel> _categories = List<CategoryModel>();
+  int position = 0;
   bool isLoading = false;
 
   @override
@@ -27,7 +30,10 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     _presenter = new BlogPresenter(this);
     // ignore: invalid_use_of_protected_member
     _presenter.setView(this);
+    _presenter.getCategories();
     _presenter.getPosts();
+
+    _categories.add(CategoryModel(id: 0, name: "SEMUA"));
   }
 
   @override
@@ -37,64 +43,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: ButtonTheme(
-                    buttonColor: MyColors.bluePrimary,
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minWidth: 0,
-                    height: 0,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      child: Text(
-                        '#SEMUA',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ), //your original button
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: ButtonTheme(
-                    buttonColor: MyColors.yellowSecond,
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minWidth: 0,
-                    height: 0,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      child: Text(
-                        '#PROGRAMMING',
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                    ), //your original button
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 8),
-                  child: ButtonTheme(
-                    buttonColor: MyColors.yellowSecond,
-                    padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minWidth: 0,
-                    height: 0,
-                    child: RaisedButton(
-                      onPressed: () {},
-                      child: Text(
-                        '#PRODUCT',
-                        style: TextStyle(color: Colors.black, fontSize: 12),
-                      ),
-                    ), //your original button
-                  ),
-                ),
-              ],
-            ),
+            _categoriesBody(context),
             SizedBox(height: 16),
             // ? Masih Bingung Mau Nampilin Gambar Apa :D
             Center(
@@ -117,6 +66,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   @override
   void loadPosts(List<PostModel> posts) {
     setState(() {
+      _posts.clear();
       _posts.addAll(posts);
       setLoading(false);
     });
@@ -229,6 +179,56 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
           ),
         ),
       ),
+    );
+  }
+
+  @override
+  void loadCategories(List<CategoryModel> categories) {
+    setState(() {
+      _categories.addAll(categories);
+    });
+  }
+
+  _categoriesBody(BuildContext context) {
+    return Container(
+      height: 32,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      child: ListView.builder(
+          primary: false,
+          shrinkWrap: true,
+          itemCount: _categories.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: EdgeInsets.only(right: 8),
+              child: ButtonTheme(
+                buttonColor: index == position
+                    ? MyColors.bluePrimary
+                    : MyColors.yellowSecond,
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minWidth: 0,
+                height: 0,
+                child: RaisedButton(
+                  onPressed: () {
+                    setState(() {
+                      position = index;
+                      _presenter.getPosts(catID: _categories[index].id);
+                    });
+                  },
+                  child: Text(
+                    "#${_categories[index].name.toUpperCase()}",
+                    style: TextStyle(
+                        color: index == position ? Colors.white : Colors.black,
+                        fontSize: 12),
+                  ),
+                ), //your original button
+              ),
+            );
+          }),
     );
   }
 }

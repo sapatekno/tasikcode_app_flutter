@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:tasikcode_app_flutter/base/base_presenter.dart';
+import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 
 abstract class BlogContract extends BaseContract {
   void loadPosts(List<PostModel> posts);
+
+  void loadCategories(List<CategoryModel> categories) {}
 
   void setLoading(bool status);
 }
@@ -15,11 +18,12 @@ class BlogPresenter extends BasePresenter {
 
   BlogPresenter(this._view);
 
-  void getPosts() async {
+  void getPosts({num catID = 0}) async {
     _view.setLoading(true);
 
     String url =
-        "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=20&_embed";
+        "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=20&_embed" +
+            (catID != 0 ? "&categories=$catID" : "");
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -30,7 +34,19 @@ class BlogPresenter extends BasePresenter {
     } else {
       // error load
     }
+  }
 
-    return null;
+  void getCategories() async {
+    String url = "http://blog.tasikcode.xyz/wp-json/wp/v2/categories";
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      List<CategoryModel> result =
+          List<CategoryModel>.from(data.map((i) => CategoryModel.fromJson(i)));
+      _view.loadCategories(result);
+    } else {
+      // error load
+    }
   }
 }
