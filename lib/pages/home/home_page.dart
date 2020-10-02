@@ -17,7 +17,26 @@ class _HomePageState extends State<HomePage> {
   List<Widget> _widgetOptions = <Widget>[
     DashboardPage(),
     Container(child: Center(child: Text('Index 1: Blog'))),
-    Container(child: Center(child: Text('Index 2: Event'))),
+    Container(
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Coming ",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
+            ),
+            Text(
+              "Soon",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: MyColors.yellowSecond),
+            ),
+          ],
+        ),
+      ),
+    ),
     Container(child: Center(child: Text('Index 3: Baraya'))),
   ];
 

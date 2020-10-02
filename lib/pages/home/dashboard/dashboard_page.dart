@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:intl/intl.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
@@ -110,6 +111,9 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
               shrinkWrap: true,
               itemCount: snapshot.data.length,
               itemBuilder: (BuildContext context, int index) {
+                String dateFormatted = DateFormat("dd MMMM yyyy")
+                    .format(snapshot.data[index].date);
+
                 return Padding(
                   padding: EdgeInsets.only(bottom: 16),
                   child: Container(
@@ -171,10 +175,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                 ),
                               ),
                               Text(
-                                snapshot.data[index].date
-                                        .toString()
-                                        .toString() ??
-                                    "-",
+                                dateFormatted ?? "-",
                                 style: TextStyle(
                                     fontSize: 12, color: MyColors.grey),
                               ),
