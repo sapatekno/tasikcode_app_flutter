@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
@@ -22,8 +24,6 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
     _presenter = new DashboardPresenter(this);
     // ignore: invalid_use_of_protected_member
     _presenter.setView(this);
-    _presenter.samplePresenter();
-    _presenter.getArtikelTerbaru();
   }
 
   @override
@@ -37,7 +37,21 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
         padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // ? Masih Bingung Mau Nampilin Gambar Apa :D
+            Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 32),
+                child: FittedBox(
+                  child: SvgPicture.asset(
+                    MyApps.pathAssetsImages("img_placeholder_large.svg"),
+                    width: 1000,
+                  ),
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            ),
             Text(
               "Artikel Terbaru",
               style: TextStyle(fontSize: 16),
@@ -50,6 +64,33 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
               ),
             ),
             _artikelTerbaru(context),
+            SizedBox(height: 8),
+            Text(
+              "Event Terbaru",
+              style: TextStyle(fontSize: 16),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Container(
+                color: MyColors.blueSoft,
+                height: 1,
+              ),
+            ),
+            Row(
+              children: <Widget>[
+                Text(
+                  "Coming ",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
+                ),
+                Text(
+                  "Soon",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: MyColors.yellowSecond),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -82,7 +123,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                             child: WebsafeSvg.asset(
                               // ? Masih Bingung Thumbnail Diambil Darimana
                               MyApps.pathAssetsImages(
-                                "img_placeholder.svg",
+                                "img_placeholder_small.svg",
                               ),
                             ),
                           ),
@@ -106,7 +147,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                 padding: EdgeInsets.only(bottom: 8),
                                 child: Text(
                                   snapshot.data[index].categories.first
-                                          .toString() ??
+                                      .toString() ??
                                       "-",
                                   style: TextStyle(
                                       fontSize: 12, color: MyColors.grey),
@@ -114,8 +155,8 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                               ),
                               Text(
                                 snapshot.data[index].date
-                                        .toString()
-                                        .toString() ??
+                                    .toString()
+                                    .toString() ??
                                     "-",
                                 style: TextStyle(
                                     fontSize: 12, color: MyColors.grey),
@@ -130,7 +171,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
               });
         } else if (snapshot.hasError) {
           childData = Text(
-            "Tidak dapat mengambil Artikel",
+            "Tidak dapat mengambil Artikel Terbaru",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
           );
         } else {
