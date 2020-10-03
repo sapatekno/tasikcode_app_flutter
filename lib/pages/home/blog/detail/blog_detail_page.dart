@@ -112,9 +112,34 @@ class _BlogDetailPageState
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 16),
-              child: Text(
-                "Posted on $dateFormatted by ${postData.embedded.author.first.name}",
-                style: TextStyle(fontSize: 14, color: MyColors.bluePrimary),
+              child: Row(
+                children: [
+                  Text(
+                    "Posted on $dateFormatted by ",
+                    style: TextStyle(fontSize: 14, color: MyColors.bluePrimary),
+                  ),
+                  postData.embedded.author.first.url.isNotEmpty
+                      ? InkWell(
+                          onTap: () async {
+                            if (await canLaunch(
+                                postData.embedded.author.first.url)) {
+                              await launch(postData.embedded.author.first.url,
+                                  forceSafariVC: false, forceWebView: false);
+                            } else {
+                              print("url - cant open url");
+                            }
+                          },
+                          child: Text(
+                            postData.embedded.author.first.name ?? "-",
+                            style: TextStyle(fontSize: 14, color: Colors.red),
+                          ),
+                        )
+                      : Text(
+                          postData.embedded.author.first.name ?? "-",
+                          style: TextStyle(
+                              fontSize: 14, color: MyColors.bluePrimary),
+                        ),
+                ],
               ),
             ),
             HtmlWidget(
