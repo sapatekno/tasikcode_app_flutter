@@ -11,6 +11,8 @@ abstract class BlogContract extends BaseContract {
   void loadCategories(List<CategoryModel> categories) {}
 
   void setLoading(bool status);
+
+  void showError(String message);
 }
 
 class BlogPresenter extends BasePresenter {
@@ -24,7 +26,12 @@ class BlogPresenter extends BasePresenter {
     String url =
         "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=20&_embed" +
             (catID != 0 ? "&categories=$catID" : "");
-    final response = await http.get(url);
+    final response = await http.get(url).catchError((error) {
+      _view.showError("Gagal mengambil data.");
+
+      // ! Error for programmers
+      print("PostData - Error $error");
+    });
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
@@ -32,7 +39,8 @@ class BlogPresenter extends BasePresenter {
           List<PostModel>.from(data.map((i) => PostModel.fromJson(i)));
       _view.loadPosts(result);
     } else {
-      // error load
+      // ! Error for programmers
+      print("PostData - Error ${response.body}");
     }
   }
 
@@ -46,7 +54,8 @@ class BlogPresenter extends BasePresenter {
           List<CategoryModel>.from(data.map((i) => CategoryModel.fromJson(i)));
       _view.loadCategories(result);
     } else {
-      // error load
+      // ! Error for programmers
+      print("CategoriesData - Error ${response.body}");
     }
   }
 }
