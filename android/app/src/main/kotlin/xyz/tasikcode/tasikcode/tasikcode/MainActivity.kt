@@ -1,4 +1,4 @@
-package xyz.tasikcode.tasikcode.tasikcode_app_flutter
+package xyz.tasikcode.tasikcode.tasikcode
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
