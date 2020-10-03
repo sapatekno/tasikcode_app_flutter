@@ -171,13 +171,26 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Expanded(
-                            flex: 1,
+                            flex: 2,
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: WebsafeSvg.asset(
-                                // ? Masih Bingung Thumbnail Diambil Darimana
-                                MyApps.pathAssetsImages(
-                                  "img_placeholder_small.svg",
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.fitWidth,
+                                  imageUrl: snapshot.data[index].embedded
+                                          .wpFeaturedmedia?.first?.sourceUrl ??
+                                      "",
+                                  placeholder: (context, url) => Container(
+                                      child: Center(
+                                          child: CircularProgressIndicator(
+                                    backgroundColor: MyColors.bluePrimary,
+                                    valueColor: AlwaysStoppedAnimation(
+                                        MyColors.yellowSecond),
+                                  ))),
+                                  errorWidget: (context, url, error) =>
+                                      WebsafeSvg.asset(MyApps.pathAssetsImages(
+                                          "img_placeholder_small.svg")),
                                 ),
                               ),
                             ),

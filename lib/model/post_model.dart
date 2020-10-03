@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final postModel = postModelFromJson(jsonString);
-
 import 'dart:convert';
 
 List<PostModel> postModelFromJson(String str) =>
@@ -39,7 +35,7 @@ class PostModel {
     this.embedded,
   });
 
-  num id;
+  int id;
   DateTime date;
   DateTime dateGmt;
   Guid guid;
@@ -52,16 +48,16 @@ class PostModel {
   Guid title;
   Content content;
   Content excerpt;
-  num author;
-  num featuredMedia;
+  int author;
+  int featuredMedia;
   String commentStatus;
   String pingStatus;
   bool sticky;
   String template;
   String format;
   List<dynamic> meta;
-  List<num> categories;
-  List<num> tags;
+  List<int> categories;
+  List<dynamic> tags;
   PostModelLinks links;
   Embedded embedded;
 
@@ -99,10 +95,10 @@ class PostModel {
             : List<dynamic>.from(json["meta"].map((x) => x)),
         categories: json["categories"] == null
             ? null
-            : List<num>.from(json["categories"].map((x) => x)),
+            : List<int>.from(json["categories"].map((x) => x)),
         tags: json["tags"] == null
             ? null
-            : List<num>.from(json["tags"].map((x) => x)),
+            : List<dynamic>.from(json["tags"].map((x) => x)),
         links: json["_links"] == null
             ? null
             : PostModelLinks.fromJson(json["_links"]),
@@ -111,15 +107,14 @@ class PostModel {
             : Embedded.fromJson(json["_embedded"]),
       );
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         "id": id == null ? null : id,
         "date": date == null ? null : date.toIso8601String(),
         "date_gmt": dateGmt == null ? null : dateGmt.toIso8601String(),
         "guid": guid == null ? null : guid.toJson(),
         "modified": modified == null ? null : modified.toIso8601String(),
-        "modified_gmt": modifiedGmt == null ? null : modifiedGmt
-            .toIso8601String(),
+        "modified_gmt":
+            modifiedGmt == null ? null : modifiedGmt.toIso8601String(),
         "slug": slug == null ? null : slug,
         "status": status == null ? null : status,
         "type": type == null ? null : type,
@@ -135,8 +130,9 @@ class PostModel {
         "template": template == null ? null : template,
         "format": format == null ? null : format,
         "meta": meta == null ? null : List<dynamic>.from(meta.map((x) => x)),
-        "categories": categories == null ? null : List<dynamic>.from(
-            categories.map((x) => x)),
+        "categories": categories == null
+            ? null
+            : List<dynamic>.from(categories.map((x) => x)),
         "tags": tags == null ? null : List<dynamic>.from(tags.map((x) => x)),
         "_links": links == null ? null : links.toJson(),
         "_embedded": embedded == null ? null : embedded.toJson(),
@@ -168,16 +164,21 @@ class Content {
 class Embedded {
   Embedded({
     this.author,
+    this.wpFeaturedmedia,
     this.wpTerm,
   });
 
   List<EmbeddedAuthor> author;
+  List<WpFeaturedmedia> wpFeaturedmedia;
   List<List<EmbeddedWpTerm>> wpTerm;
 
   factory Embedded.fromJson(Map<String, dynamic> json) =>
       Embedded(
         author: json["author"] == null ? null : List<EmbeddedAuthor>.from(
             json["author"].map((x) => EmbeddedAuthor.fromJson(x))),
+        wpFeaturedmedia: json["wp:featuredmedia"] == null ? null : List<
+            WpFeaturedmedia>.from(
+            json["wp:featuredmedia"].map((x) => WpFeaturedmedia.fromJson(x))),
         wpTerm: json["wp:term"] == null ? null : List<
             List<EmbeddedWpTerm>>.from(
             json["wp:term"].map((x) => List<EmbeddedWpTerm>.from(
@@ -188,6 +189,8 @@ class Embedded {
       {
         "author": author == null ? null : List<dynamic>.from(
             author.map((x) => x.toJson())),
+        "wp:featuredmedia": wpFeaturedmedia == null ? null : List<dynamic>.from(
+            wpFeaturedmedia.map((x) => x.toJson())),
         "wp:term": wpTerm == null ? null : List<dynamic>.from(
             wpTerm.map((x) => List<dynamic>.from(x.map((x) => x.toJson())))),
       };
@@ -205,7 +208,7 @@ class EmbeddedAuthor {
     this.links,
   });
 
-  num id;
+  int id;
   String name;
   String url;
   String description;
@@ -286,6 +289,278 @@ class About {
       };
 }
 
+class WpFeaturedmedia {
+  WpFeaturedmedia({
+    this.id,
+    this.date,
+    this.slug,
+    this.type,
+    this.link,
+    this.title,
+    this.author,
+    this.caption,
+    this.altText,
+    this.mediaType,
+    this.mimeType,
+    this.mediaDetails,
+    this.sourceUrl,
+    this.links,
+  });
+
+  int id;
+  DateTime date;
+  String slug;
+  String type;
+  String link;
+  Guid title;
+  int author;
+  Guid caption;
+  String altText;
+  String mediaType;
+  String mimeType;
+  MediaDetails mediaDetails;
+  String sourceUrl;
+  WpFeaturedmediaLinks links;
+
+  factory WpFeaturedmedia.fromJson(Map<String, dynamic> json) =>
+      WpFeaturedmedia(
+        id: json["id"] == null ? null : json["id"],
+        date: json["date"] == null ? null : DateTime.parse(json["date"]),
+        slug: json["slug"] == null ? null : json["slug"],
+        type: json["type"] == null ? null : json["type"],
+        link: json["link"] == null ? null : json["link"],
+        title: json["title"] == null ? null : Guid.fromJson(json["title"]),
+        author: json["author"] == null ? null : json["author"],
+        caption: json["caption"] == null ? null : Guid.fromJson(
+            json["caption"]),
+        altText: json["alt_text"] == null ? null : json["alt_text"],
+        mediaType: json["media_type"] == null ? null : json["media_type"],
+        mimeType: json["mime_type"] == null ? null : json["mime_type"],
+        mediaDetails: json["media_details"] == null ? null : MediaDetails
+            .fromJson(json["media_details"]),
+        sourceUrl: json["source_url"] == null ? null : json["source_url"],
+        links: json["_links"] == null ? null : WpFeaturedmediaLinks.fromJson(
+            json["_links"]),
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "id": id == null ? null : id,
+        "date": date == null ? null : date.toIso8601String(),
+        "slug": slug == null ? null : slug,
+        "type": type == null ? null : type,
+        "link": link == null ? null : link,
+        "title": title == null ? null : title.toJson(),
+        "author": author == null ? null : author,
+        "caption": caption == null ? null : caption.toJson(),
+        "alt_text": altText == null ? null : altText,
+        "media_type": mediaType == null ? null : mediaType,
+        "mime_type": mimeType == null ? null : mimeType,
+        "media_details": mediaDetails == null ? null : mediaDetails.toJson(),
+        "source_url": sourceUrl == null ? null : sourceUrl,
+        "_links": links == null ? null : links.toJson(),
+      };
+}
+
+class Guid {
+  Guid({
+    this.rendered,
+  });
+
+  String rendered;
+
+  factory Guid.fromJson(Map<String, dynamic> json) =>
+      Guid(
+        rendered: json["rendered"] == null ? null : json["rendered"],
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "rendered": rendered == null ? null : rendered,
+      };
+}
+
+class WpFeaturedmediaLinks {
+  WpFeaturedmediaLinks({
+    this.self,
+    this.collection,
+    this.about,
+    this.author,
+    this.replies,
+  });
+
+  List<About> self;
+  List<About> collection;
+  List<About> about;
+  List<ReplyElement> author;
+  List<ReplyElement> replies;
+
+  factory WpFeaturedmediaLinks.fromJson(Map<String, dynamic> json) =>
+      WpFeaturedmediaLinks(
+        self: json["self"] == null ? null : List<About>.from(
+            json["self"].map((x) => About.fromJson(x))),
+        collection: json["collection"] == null ? null : List<About>.from(
+            json["collection"].map((x) => About.fromJson(x))),
+        about: json["about"] == null ? null : List<About>.from(
+            json["about"].map((x) => About.fromJson(x))),
+        author: json["author"] == null ? null : List<ReplyElement>.from(
+            json["author"].map((x) => ReplyElement.fromJson(x))),
+        replies: json["replies"] == null ? null : List<ReplyElement>.from(
+            json["replies"].map((x) => ReplyElement.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "self": self == null ? null : List<dynamic>.from(
+            self.map((x) => x.toJson())),
+        "collection": collection == null ? null : List<dynamic>.from(
+            collection.map((x) => x.toJson())),
+        "about": about == null ? null : List<dynamic>.from(
+            about.map((x) => x.toJson())),
+        "author": author == null ? null : List<dynamic>.from(
+            author.map((x) => x.toJson())),
+        "replies": replies == null ? null : List<dynamic>.from(
+            replies.map((x) => x.toJson())),
+      };
+}
+
+class ReplyElement {
+  ReplyElement({
+    this.embeddable,
+    this.href,
+  });
+
+  bool embeddable;
+  String href;
+
+  factory ReplyElement.fromJson(Map<String, dynamic> json) =>
+      ReplyElement(
+        embeddable: json["embeddable"] == null ? null : json["embeddable"],
+        href: json["href"] == null ? null : json["href"],
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "embeddable": embeddable == null ? null : embeddable,
+        "href": href == null ? null : href,
+      };
+}
+
+class MediaDetails {
+  MediaDetails({
+    this.width,
+    this.height,
+    this.file,
+    this.imageMeta,
+    this.sizes,
+  });
+
+  int width;
+  int height;
+  String file;
+  ImageMeta imageMeta;
+  Sizes sizes;
+
+  factory MediaDetails.fromJson(Map<String, dynamic> json) =>
+      MediaDetails(
+        width: json["width"] == null ? null : json["width"],
+        height: json["height"] == null ? null : json["height"],
+        file: json["file"] == null ? null : json["file"],
+        imageMeta: json["image_meta"] == null ? null : ImageMeta.fromJson(
+            json["image_meta"]),
+        sizes: json["sizes"] == null ? null : Sizes.fromJson(json["sizes"]),
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "width": width == null ? null : width,
+        "height": height == null ? null : height,
+        "file": file == null ? null : file,
+        "image_meta": imageMeta == null ? null : imageMeta.toJson(),
+        "sizes": sizes == null ? null : sizes.toJson(),
+      };
+}
+
+class ImageMeta {
+  ImageMeta({
+    this.aperture,
+    this.credit,
+    this.camera,
+    this.caption,
+    this.createdTimestamp,
+    this.copyright,
+    this.focalLength,
+    this.iso,
+    this.shutterSpeed,
+    this.title,
+    this.orientation,
+    this.keywords,
+  });
+
+  String aperture;
+  String credit;
+  String camera;
+  String caption;
+  String createdTimestamp;
+  String copyright;
+  String focalLength;
+  String iso;
+  String shutterSpeed;
+  String title;
+  String orientation;
+  List<dynamic> keywords;
+
+  factory ImageMeta.fromJson(Map<String, dynamic> json) =>
+      ImageMeta(
+        aperture: json["aperture"] == null ? null : json["aperture"],
+        credit: json["credit"] == null ? null : json["credit"],
+        camera: json["camera"] == null ? null : json["camera"],
+        caption: json["caption"] == null ? null : json["caption"],
+        createdTimestamp: json["created_timestamp"] == null
+            ? null
+            : json["created_timestamp"],
+        copyright: json["copyright"] == null ? null : json["copyright"],
+        focalLength: json["focal_length"] == null ? null : json["focal_length"],
+        iso: json["iso"] == null ? null : json["iso"],
+        shutterSpeed: json["shutter_speed"] == null
+            ? null
+            : json["shutter_speed"],
+        title: json["title"] == null ? null : json["title"],
+        orientation: json["orientation"] == null ? null : json["orientation"],
+        keywords: json["keywords"] == null ? null : List<dynamic>.from(
+            json["keywords"].map((x) => x)),
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+        "aperture": aperture == null ? null : aperture,
+        "credit": credit == null ? null : credit,
+        "camera": camera == null ? null : camera,
+        "caption": caption == null ? null : caption,
+        "created_timestamp": createdTimestamp == null ? null : createdTimestamp,
+        "copyright": copyright == null ? null : copyright,
+        "focal_length": focalLength == null ? null : focalLength,
+        "iso": iso == null ? null : iso,
+        "shutter_speed": shutterSpeed == null ? null : shutterSpeed,
+        "title": title == null ? null : title,
+        "orientation": orientation == null ? null : orientation,
+        "keywords": keywords == null ? null : List<dynamic>.from(
+            keywords.map((x) => x)),
+      };
+}
+
+class Sizes {
+  Sizes();
+
+  factory Sizes.fromJson(Map<String, dynamic> json) =>
+      Sizes(
+      );
+
+  Map<String, dynamic> toJson() =>
+      {
+      };
+}
+
 class EmbeddedWpTerm {
   EmbeddedWpTerm({
     this.id,
@@ -296,11 +571,11 @@ class EmbeddedWpTerm {
     this.links,
   });
 
-  num id;
+  int id;
   String link;
   String name;
   String slug;
-  String taxonomy;
+  Taxonomy taxonomy;
   WpTermLinks links;
 
   factory EmbeddedWpTerm.fromJson(Map<String, dynamic> json) =>
@@ -309,7 +584,8 @@ class EmbeddedWpTerm {
         link: json["link"] == null ? null : json["link"],
         name: json["name"] == null ? null : json["name"],
         slug: json["slug"] == null ? null : json["slug"],
-        taxonomy: json["taxonomy"] == null ? null : json["taxonomy"],
+        taxonomy: json["taxonomy"] == null ? null : taxonomyValues
+            .map[json["taxonomy"]],
         links: json["_links"] == null ? null : WpTermLinks.fromJson(
             json["_links"]),
       );
@@ -320,7 +596,7 @@ class EmbeddedWpTerm {
         "link": link == null ? null : link,
         "name": name == null ? null : name,
         "slug": slug == null ? null : slug,
-        "taxonomy": taxonomy == null ? null : taxonomy,
+        "taxonomy": taxonomy == null ? null : taxonomyValues.reverse[taxonomy],
         "_links": links == null ? null : links.toJson(),
       };
 }
@@ -407,23 +683,12 @@ final nameValues = EnumValues({
   "wp": Name.WP
 });
 
-class Guid {
-  Guid({
-    this.rendered,
-  });
+enum Taxonomy { CATEGORY, POST_TAG }
 
-  String rendered;
-
-  factory Guid.fromJson(Map<String, dynamic> json) =>
-      Guid(
-        rendered: json["rendered"] == null ? null : json["rendered"],
-      );
-
-  Map<String, dynamic> toJson() =>
-      {
-        "rendered": rendered == null ? null : rendered,
-      };
-}
+final taxonomyValues = EnumValues({
+  "category": Taxonomy.CATEGORY,
+  "post_tag": Taxonomy.POST_TAG
+});
 
 class PostModelLinks {
   PostModelLinks({
@@ -434,6 +699,7 @@ class PostModelLinks {
     this.replies,
     this.versionHistory,
     this.predecessorVersion,
+    this.wpFeaturedmedia,
     this.wpAttachment,
     this.wpTerm,
     this.curies,
@@ -446,6 +712,7 @@ class PostModelLinks {
   List<ReplyElement> replies;
   List<VersionHistory> versionHistory;
   List<PredecessorVersion> predecessorVersion;
+  List<ReplyElement> wpFeaturedmedia;
   List<About> wpAttachment;
   List<LinksWpTerm> wpTerm;
   List<Cury> curies;
@@ -468,6 +735,9 @@ class PostModelLinks {
         predecessorVersion: json["predecessor-version"] == null ? null : List<
             PredecessorVersion>.from(json["predecessor-version"].map((x) =>
             PredecessorVersion.fromJson(x))),
+        wpFeaturedmedia: json["wp:featuredmedia"] == null ? null : List<
+            ReplyElement>.from(
+            json["wp:featuredmedia"].map((x) => ReplyElement.fromJson(x))),
         wpAttachment: json["wp:attachment"] == null ? null : List<About>.from(
             json["wp:attachment"].map((x) => About.fromJson(x))),
         wpTerm: json["wp:term"] == null ? null : List<LinksWpTerm>.from(
@@ -492,6 +762,8 @@ class PostModelLinks {
             versionHistory.map((x) => x.toJson())),
         "predecessor-version": predecessorVersion == null ? null : List<
             dynamic>.from(predecessorVersion.map((x) => x.toJson())),
+        "wp:featuredmedia": wpFeaturedmedia == null ? null : List<dynamic>.from(
+            wpFeaturedmedia.map((x) => x.toJson())),
         "wp:attachment": wpAttachment == null ? null : List<dynamic>.from(
             wpAttachment.map((x) => x.toJson())),
         "wp:term": wpTerm == null ? null : List<dynamic>.from(
@@ -501,35 +773,13 @@ class PostModelLinks {
       };
 }
 
-class ReplyElement {
-  ReplyElement({
-    this.embeddable,
-    this.href,
-  });
-
-  bool embeddable;
-  String href;
-
-  factory ReplyElement.fromJson(Map<String, dynamic> json) =>
-      ReplyElement(
-        embeddable: json["embeddable"] == null ? null : json["embeddable"],
-        href: json["href"] == null ? null : json["href"],
-      );
-
-  Map<String, dynamic> toJson() =>
-      {
-        "embeddable": embeddable == null ? null : embeddable,
-        "href": href == null ? null : href,
-      };
-}
-
 class PredecessorVersion {
   PredecessorVersion({
     this.id,
     this.href,
   });
 
-  num id;
+  int id;
   String href;
 
   factory PredecessorVersion.fromJson(Map<String, dynamic> json) =>
@@ -551,7 +801,7 @@ class VersionHistory {
     this.href,
   });
 
-  num count;
+  int count;
   String href;
 
   factory VersionHistory.fromJson(Map<String, dynamic> json) =>
@@ -574,20 +824,21 @@ class LinksWpTerm {
     this.href,
   });
 
-  String taxonomy;
+  Taxonomy taxonomy;
   bool embeddable;
   String href;
 
   factory LinksWpTerm.fromJson(Map<String, dynamic> json) =>
       LinksWpTerm(
-        taxonomy: json["taxonomy"] == null ? null : json["taxonomy"],
+        taxonomy: json["taxonomy"] == null ? null : taxonomyValues
+            .map[json["taxonomy"]],
         embeddable: json["embeddable"] == null ? null : json["embeddable"],
         href: json["href"] == null ? null : json["href"],
       );
 
   Map<String, dynamic> toJson() =>
       {
-        "taxonomy": taxonomy == null ? null : taxonomy,
+        "taxonomy": taxonomy == null ? null : taxonomyValues.reverse[taxonomy],
         "embeddable": embeddable == null ? null : embeddable,
         "href": href == null ? null : href,
       };

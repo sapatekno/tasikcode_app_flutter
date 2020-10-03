@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
@@ -29,7 +30,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   int _page = 1;
   int _totalPages = 0;
   RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -150,17 +151,34 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Expanded(
-                        flex: 1,
-                        child: Padding(
-                          padding:
-                          EdgeInsets.symmetric(horizontal: 8),
-                          child: WebsafeSvg.asset(
-                            // ? Masih Bingung Thumbnail Diambil Darimana
-                            MyApps.pathAssetsImages(
-                              "img_placeholder_small.svg",
-                            ),
-                          ),
-                        ),
+                        flex: 2,
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: CachedNetworkImage(
+                                        fit: BoxFit.fitWidth,
+                                        imageUrl: _posts[index]
+                                                .embedded
+                                                .wpFeaturedmedia
+                                                ?.first
+                                                ?.sourceUrl ??
+                                            "",
+                                        placeholder: (context, url) => Container(
+                                            child: Center(
+                                                child: CircularProgressIndicator(
+                                          backgroundColor: MyColors.bluePrimary,
+                                          valueColor: AlwaysStoppedAnimation(
+                                              MyColors.yellowSecond),
+                                        ))),
+                                        errorWidget: (context, url, error) =>
+                                            WebsafeSvg.asset(
+                                                MyApps.pathAssetsImages(
+                                                    "img_placeholder_small.svg")),
+                                      ),
+                                    ),
+                                  ),
                       ),
                       Expanded(
                         flex: 3,
@@ -248,7 +266,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
           },
         ),
       ),
-              );
+    );
   }
 
   @override
