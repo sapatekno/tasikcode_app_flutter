@@ -65,32 +65,6 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
             ),
             _artikelTerbaru(context),
             SizedBox(height: 8),
-            Text(
-              "Event Terbaru",
-              style: TextStyle(fontSize: 16),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Container(
-                color: MyColors.blueSoft,
-                height: 1,
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Text(
-                  "Coming ",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
-                ),
-                Text(
-                  "Soon",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: MyColors.yellowSecond),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -137,7 +111,6 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                 MyApps.pathAssetsImages(
                                   "img_placeholder_small.svg",
                                 ),
-                                fit: BoxFit.fitHeight,
                               ),
                             ),
                           ),
@@ -149,7 +122,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.only(bottom: 24),
+                                    padding: EdgeInsets.only(bottom: 16),
                                     child: HtmlWidget(
                                       snapshot.data[index].title.rendered ??
                                           "-",
@@ -158,21 +131,55 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                           fontSize: 14),
                                     ),
                                   ),
-                                  // ! Sementara hanya bisa menampilkan 1 Kategori saja
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 8),
-                                    child: Text(
-                                      snapshot.data[index].embedded.wpTerm.first
-                                              .first.name ??
-                                          "-",
-                                      style: TextStyle(
-                                          fontSize: 12, color: MyColors.grey),
-                                    ),
+                                  // ! Sudah Bisa menampilkan lebih dari 1 kategori cuma belum rapih
+                                  Container(
+                                    height: 24,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ListView.builder(
+                                        shrinkWrap: true,
+                                        primary: false,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: snapshot.data[index].embedded
+                                            .wpTerm.first.length,
+                                        itemBuilder: (BuildContext context,
+                                            int position) {
+                                          return Padding(
+                                            padding: EdgeInsets.only(right: 4),
+                                            child: Text(
+                                              snapshot
+                                                          .data[index]
+                                                          .embedded
+                                                          .wpTerm
+                                                          .first[position]
+                                                          .name +
+                                                      (snapshot
+                                                                  .data[index]
+                                                                  .embedded
+                                                                  .wpTerm
+                                                                  .first
+                                                                  .last
+                                                                  .id ==
+                                                              snapshot
+                                                                  .data[index]
+                                                                  .embedded
+                                                                  .wpTerm
+                                                                  .first[
+                                                                      position]
+                                                                  .id
+                                                          ? ""
+                                                          : ",") ??
+                                                  "-",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.blueGrey),
+                                            ),
+                                          );
+                                        }),
                                   ),
                                   Text(
                                     dateFormatted ?? "-",
                                     style: TextStyle(
-                                        fontSize: 12, color: MyColors.grey),
+                                        fontSize: 12, color: Colors.blueGrey),
                                   ),
                                 ],
                               ),
