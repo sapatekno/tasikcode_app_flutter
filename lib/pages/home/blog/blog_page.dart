@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
@@ -25,6 +26,10 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   bool isLoading = false;
   bool isError = false;
   String errorMessage = "";
+  int _page = 1;
+  int _totalPages = 0;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -55,11 +60,30 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   }
 
   @override
-  void loadPosts(List<PostModel> posts) {
+  void loadPosts(List<PostModel> posts, int totalPages, bool isRefresh,
+      bool isLoad) {
     setState(() {
-      _posts.clear();
+      _totalPages = totalPages;
+
+      if (!isLoad) {
+        _posts.clear();
+      }
+
       _posts.addAll(posts);
       setLoading(false);
+
+      if (isRefresh) {
+        setState(() {
+          _page = 1;
+        });
+
+        _refreshController.refreshCompleted();
+        _refreshController.loadComplete();
+      }
+
+      if (isLoad) {
+        _refreshController.loadComplete();
+      }
     });
   }
 
@@ -67,120 +91,163 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     return isError
         ? _errorBody(context)
         : isLoading
-            ? _loadingBody(context)
-            : ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                itemCount: (_posts.length ?? 0),
-                itemBuilder: (BuildContext context, int index) {
-                  String dateFormatted =
-                      DateFormat("dd MMMM yyyy").format(_posts[index].date);
+        ? _loadingBody(context)
+        : Container(
+      height: MediaQuery
+          .of(context)
+          .size
+          .height - 200,
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: ClassicHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              body = Text("pull up load");
+            } else if (mode == LoadStatus.loading) {
+              body = CupertinoActivityIndicator();
+            } else if (mode == LoadStatus.failed) {
+              body = Text("Load Failed!Click retry!");
+            } else if (mode == LoadStatus.canLoading) {
+              body = Text("release to load more");
+            } else {
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        child: ListView.builder(
+          primary: false,
+          shrinkWrap: true,
+          itemCount: (_posts.length ?? 0),
+          itemBuilder: (BuildContext context, int index) {
+            String dateFormatted =
+            DateFormat("dd MMMM yyyy").format(_posts[index].date);
 
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 16),
-                    child: Container(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    BlogDetailPage(postData: _posts[index])),
-                          );
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: WebsafeSvg.asset(
-                                  // ? Masih Bingung Thumbnail Diambil Darimana
-                                  MyApps.pathAssetsImages(
-                                    "img_placeholder_small.svg",
-                                  ),
-                                ),
-                              ),
+            return Padding(
+              padding: EdgeInsets.only(bottom: 16),
+              child: Container(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              BlogDetailPage(
+                                  postData: _posts[index])),
+                    );
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 8),
+                          child: WebsafeSvg.asset(
+                            // ? Masih Bingung Thumbnail Diambil Darimana
+                            MyApps.pathAssetsImages(
+                              "img_placeholder_small.svg",
                             ),
-                            Expanded(
-                              flex: 3,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 24),
-                                      child: HtmlWidget(
-                                        _posts[index].title.rendered ?? "-",
-                                        textStyle: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
-                                      ),
-                                    ),
-                                    // ! Sementara hanya bisa menampilkan 1 Kategori saja
-                                    Container(
-                                      height: 24,
-                                      width: MediaQuery.of(context).size.width,
-                                      child: ListView.builder(
-                                          shrinkWrap: true,
-                                          primary: false,
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: _posts[index]
-                                              .embedded
-                                              .wpTerm
-                                              .first
-                                              .length,
-                                          itemBuilder: (BuildContext context,
-                                              int position) {
-                                            return Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 4),
-                                              child: Text(
-                                                _posts[index]
-                                                            .embedded
-                                                            .wpTerm
-                                                            .first[position]
-                                                            .name +
-                                                        (_posts[index]
-                                                                    .embedded
-                                                                    .wpTerm
-                                                                    .first
-                                                                    .last
-                                                                    .id ==
-                                                                _posts[index]
-                                                                    .embedded
-                                                                    .wpTerm
-                                                                    .first[
-                                                                        position]
-                                                                    .id
-                                                            ? ""
-                                                            : ",") ??
-                                                    "-",
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.blueGrey),
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                    Text(
-                                      dateFormatted ?? "-",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.blueGrey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 24),
+                                child: HtmlWidget(
+                                  _posts[index].title.rendered ?? "-",
+                                  textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                              ),
+                              // ! Bisa menampilkan banyak kategori tapi masih belum clean code
+                              Container(
+                                height: 24,
+                                width:
+                                MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width,
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    primary: false,
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: _posts[index]
+                                        .embedded
+                                        .wpTerm
+                                        .first
+                                        .length,
+                                    itemBuilder:
+                                        (BuildContext context,
+                                        int position) {
+                                      return Padding(
+                                        padding:
+                                        EdgeInsets.only(right: 4),
+                                        child: Text(
+                                          _posts[index]
+                                              .embedded
+                                              .wpTerm
+                                              .first[position]
+                                              .name +
+                                              (_posts[index]
+                                                  .embedded
+                                                  .wpTerm
+                                                  .first
+                                                  .last
+                                                  .id ==
+                                                  _posts[index]
+                                                      .embedded
+                                                      .wpTerm
+                                                      .first[
+                                                  position]
+                                                      .id
+                                                  ? ""
+                                                  : ",") ??
+                                              "-",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.blueGrey),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                              Text(
+                                dateFormatted ?? "-",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blueGrey),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
               );
   }
 
@@ -238,6 +305,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                 child: RaisedButton(
                   onPressed: () {
                     setState(() {
+                      _page = 1;
+                      _refreshController.loadComplete();
                       position = index;
                       _presenter.getPosts(catID: _categories[index].id);
                     });
@@ -287,5 +356,19 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
         ),
       ],
     );
+  }
+
+  _onRefresh() {
+    _presenter.getPosts(catID: _categories[position].id, isRefresh: true);
+  }
+
+  _onLoading() {
+    print("page - current page $_page of $_totalPages");
+    if (_page < _totalPages) {
+      _presenter.getPosts(
+          catID: _categories[position].id, isLoad: true, page: _page++);
+    } else {
+      _refreshController.loadNoData();
+    }
   }
 }
