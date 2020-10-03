@@ -365,8 +365,9 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   _onLoading() {
     print("page - current page $_page of $_totalPages");
     if (_page < _totalPages) {
+      _page++;
       _presenter.getPosts(
-          catID: _categories[position].id, isLoad: true, page: _page++);
+          catID: _categories[position].id, isLoad: true, page: _page);
     } else {
       _refreshController.loadNoData();
     }

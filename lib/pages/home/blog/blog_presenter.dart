@@ -21,10 +21,11 @@ class BlogPresenter extends BasePresenter {
 
   BlogPresenter(this._view);
 
-  void getPosts({num catID = 0,
-    bool isRefresh = false,
-    bool isLoad = false,
-    int page = 1}) async {
+  void getPosts(
+      {num catID = 0,
+      bool isRefresh = false,
+      bool isLoad = false,
+      int page = 1}) async {
     print("is load adalah $isLoad");
 
     // ? tidak bisa pake OR ??
