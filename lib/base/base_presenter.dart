@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 abstract class BaseContract {
   void sampleAbstract();
+
+  void showAlert({String message, Color color});
 }
 
 abstract class BasePresenter<T extends BaseContract> {

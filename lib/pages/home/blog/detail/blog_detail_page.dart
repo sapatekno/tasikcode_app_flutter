@@ -72,11 +72,16 @@ class _BlogDetailPageState
       ),
       actions: <Widget>[
         IconButton(
+          tooltip: "Notifikasi",
           icon: Icon(
             FontAwesome.bell_o,
             color: MyColors.bluePrimary,
           ),
-          onPressed: () => null,
+          onPressed: () {
+            showAlert(
+                message: "Belum ada notifikasi terbaru",
+                color: MyColors.bluePrimary);
+          },
         )
       ],
       leading: InkWell(

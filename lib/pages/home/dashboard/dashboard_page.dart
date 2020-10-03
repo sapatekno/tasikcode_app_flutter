@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,6 +10,7 @@ import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_page.da
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
 class DashboardPage extends BaseStatefulWidget {
@@ -19,6 +21,8 @@ class DashboardPage extends BaseStatefulWidget {
 class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
     implements DashboardContract {
   DashboardPresenter _presenter;
+  String _imageURL =
+      "https://blog.tasikcode.xyz/wp-content/uploads/2019/10/DSC00280.jpg";
 
   @override
   void initState() {
@@ -42,16 +46,80 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             // ? Masih Bingung Mau Nampilin Gambar Apa :D
-            Center(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 32),
-                child: WebsafeSvg.asset(
-                  MyApps.pathAssetsImages("img_placeholder_large.svg"),
+            InkWell(
+              onTap: () {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (ctx) {
+                    return StatefulBuilder(
+                      builder: (ctxStateful, setState) {
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text("Tasikmalaya Hacktoberfest 2019"),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("Batal",
+                                  style: TextStyle(color: Colors.red)),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("Buka",
+                                  style:
+                                      TextStyle(color: MyColors.bluePrimary)),
+                              onPressed: () async {
+                                String url =
+                                    "https://blog.tasikcode.xyz/2019/10/24/tasikmalaya-hacktoberfest-2019/";
+                                if (await canLaunch(url)) {
+                                  await launch(url,
+                                      forceSafariVC: false,
+                                      forceWebView: false);
+                                } else {
+                                  print("url - cant open url");
+                                }
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CachedNetworkImage(
                   fit: BoxFit.fitWidth,
-                  width: MediaQuery.of(context).size.width,
+                  imageUrl: _imageURL,
+                  placeholder: (context, url) => Container(
+                      child: Padding(
+                    padding: EdgeInsets.all(64),
+                    child: Center(
+                        child: CircularProgressIndicator(
+                      backgroundColor: MyColors.bluePrimary,
+                      valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
+                    )),
+                  )),
+                  errorWidget: (context, url, error) => Padding(
+                    padding: EdgeInsets.all(64),
+                    child: Container(
+                      child: Center(
+                        child: Icon(Icons.error),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
+            SizedBox(height: 16),
             Text(
               "Artikel Terbaru",
               style: TextStyle(fontSize: 16),
@@ -147,27 +215,27 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                             padding: EdgeInsets.only(right: 4),
                                             child: Text(
                                               snapshot
+                                                  .data[index]
+                                                  .embedded
+                                                  .wpTerm
+                                                  .first[position]
+                                                  .name +
+                                                  (snapshot
+                                                      .data[index]
+                                                      .embedded
+                                                      .wpTerm
+                                                      .first
+                                                      .last
+                                                      .id ==
+                                                      snapshot
                                                           .data[index]
                                                           .embedded
                                                           .wpTerm
-                                                          .first[position]
-                                                          .name +
-                                                      (snapshot
-                                                                  .data[index]
-                                                                  .embedded
-                                                                  .wpTerm
-                                                                  .first
-                                                                  .last
-                                                                  .id ==
-                                                              snapshot
-                                                                  .data[index]
-                                                                  .embedded
-                                                                  .wpTerm
-                                                                  .first[
-                                                                      position]
-                                                                  .id
-                                                          ? ""
-                                                          : ",") ??
+                                                          .first[
+                                                      position]
+                                                          .id
+                                                      ? ""
+                                                      : ",") ??
                                                   "-",
                                               style: TextStyle(
                                                   fontSize: 12,

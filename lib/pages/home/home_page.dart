@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -62,11 +63,19 @@ class _HomePageState extends State<HomePage> {
       ),
       actions: <Widget>[
         IconButton(
+          tooltip: "Notifikasi",
           icon: Icon(
             FontAwesome.bell_o,
             color: MyColors.bluePrimary,
           ),
-          onPressed: () => null,
+          onPressed: () {
+            Flushbar(
+              flushbarPosition: FlushbarPosition.BOTTOM,
+              message: "Belum ada notifikasi terbaru",
+              backgroundColor: MyColors.bluePrimary,
+              duration: Duration(seconds: 3),
+            ).show(context);
+          },
         )
       ],
     );
