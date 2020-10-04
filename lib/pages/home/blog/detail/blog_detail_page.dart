@@ -139,20 +139,20 @@ class _BlogDetailPageState
                   ),
                   postData.embedded.author.first.url.isNotEmpty
                       ? InkWell(
-                    onTap: () async {
-                      if (await canLaunch(
-                          postData.embedded.author.first.url)) {
-                        await launch(postData.embedded.author.first.url,
-                            forceSafariVC: false, forceWebView: false);
-                      } else {
-                        print("url - cant open url");
-                      }
-                    },
-                    child: Text(
-                      postData.embedded.author.first.name ?? "-",
-                      style: TextStyle(fontSize: 14, color: Colors.red),
-                    ),
-                  )
+                          onTap: () async {
+                            if (await canLaunch(
+                                postData.embedded.author.first.url)) {
+                              await launch(postData.embedded.author.first.url,
+                                  forceSafariVC: false, forceWebView: false);
+                            } else {
+                              print("url - cant open url");
+                            }
+                          },
+                          child: Text(
+                            postData.embedded.author.first.name ?? "-",
+                            style: TextStyle(fontSize: 14, color: Colors.red),
+                          ),
+                        )
                       : Text(
                           postData.embedded.author.first.name ?? "-",
                           style: TextStyle(
@@ -164,17 +164,18 @@ class _BlogDetailPageState
             featuredImage.isEmpty
                 ? Container()
                 : InkWell(
-                    onTap: () => _popUpImage(featuredImage),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fitWidth,
-                        imageUrl: featuredImage,
-                        placeholder: (context, url) => Container(
-                            child: Center(
-                                child: CircularProgressIndicator(
-                          backgroundColor: MyColors.bluePrimary,
-                          valueColor:
+              onTap: () => popUpImage(featuredImage),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: CachedNetworkImage(
+                  fit: BoxFit.fitWidth,
+                  imageUrl: featuredImage,
+                  placeholder: (context, url) =>
+                      Container(
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: MyColors.bluePrimary,
+                                valueColor:
                               AlwaysStoppedAnimation(MyColors.yellowSecond),
                         ))),
                         errorWidget: (context, url, error) => WebsafeSvg.asset(
@@ -195,7 +196,7 @@ class _BlogDetailPageState
                 }
               },
               onImageTap: (imageUrl) {
-                _popUpImage(imageUrl);
+                popUpImage(imageUrl);
               },
               style: {
                 "blockquote": Style(
@@ -213,7 +214,20 @@ class _BlogDetailPageState
     );
   }
 
-  _popUpImage(String imageUrl) {
+  askStoragePermission(String imageUrl) async {
+    await Permission.storage.request();
+    var status = await Permission.storage.status;
+
+    if (status.isGranted) {
+      saveImageToGallery(imageUrl);
+    } else {
+      showAlert(
+          message: "Tidak dapat menyimpan gambar tanpa akses.",
+          color: Colors.red);
+    }
+  }
+
+  popUpImage(String imageUrl) {
     return showDialog(
       barrierDismissible: true,
       context: context,
@@ -259,7 +273,7 @@ class _BlogDetailPageState
                     children: [
                       FlatButton(
                         color: MyColors.yellowSecond,
-                        onPressed: () => _saveImageToGallery(imageUrl),
+                        onPressed: () => saveImageToGallery(imageUrl),
                         child: Text("Simpan ke Galeri"),
                       ),
                     ],
@@ -273,7 +287,7 @@ class _BlogDetailPageState
     );
   }
 
-  _saveImageToGallery(String imageUrl) async {
+  saveImageToGallery(String imageUrl) async {
     var status = await Permission.storage.status;
 
     if (status.isGranted) {
@@ -299,28 +313,15 @@ class _BlogDetailPageState
             color: Colors.red);
       }
     } else if (status.isUndetermined) {
-      _askStoragePermission(imageUrl);
+      askStoragePermission(imageUrl);
     } else if (status.isDenied) {
-      _askStoragePermission(imageUrl);
+      askStoragePermission(imageUrl);
     } else if (status.isRestricted || status.isPermanentlyDenied) {
       showAlert(
           message: "Berikan hak akses untuk penyimpanan",
           color: MyColors.bluePrimary);
       await Future.delayed(Duration(seconds: 2));
       openAppSettings();
-    }
-  }
-
-  _askStoragePermission(String imageUrl) async {
-    await Permission.storage.request();
-    var status = await Permission.storage.status;
-
-    if (status.isGranted) {
-      _saveImageToGallery(imageUrl);
-    } else {
-      showAlert(
-          message: "Tidak dapat menyimpan gambar tanpa akses.",
-          color: Colors.red);
     }
   }
 }
