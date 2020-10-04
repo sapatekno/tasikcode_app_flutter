@@ -165,17 +165,26 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                                                 ?.first
                                                 ?.sourceUrl ??
                                             "",
-                                        placeholder: (context, url) => Container(
-                                            child: Center(
-                                                child: CircularProgressIndicator(
-                                          backgroundColor: MyColors.bluePrimary,
-                                          valueColor: AlwaysStoppedAnimation(
-                                              MyColors.yellowSecond),
-                                        ))),
+                                        placeholder: (context, url) =>
+                                            Container(
+                                          width: 64,
+                                          height: 64,
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              backgroundColor:
+                                                  MyColors.bluePrimary,
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                      MyColors.yellowSecond),
+                                            ),
+                                          ),
+                                        ),
                                         errorWidget: (context, url, error) =>
                                             WebsafeSvg.asset(
                                                 MyApps.pathAssetsImages(
-                                                    "img_placeholder_small.svg")),
+                                                    "img_placeholder_large.svg"),
+                                                fit: BoxFit.fitHeight,
+                                                height: 96),
                                       ),
                                     ),
                                   ),

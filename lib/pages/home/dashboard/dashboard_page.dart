@@ -182,15 +182,22 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                           .wpFeaturedmedia?.first?.sourceUrl ??
                                       "",
                                   placeholder: (context, url) => Container(
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                    backgroundColor: MyColors.bluePrimary,
-                                    valueColor: AlwaysStoppedAnimation(
-                                        MyColors.yellowSecond),
-                                  ))),
+                                    width: 64,
+                                    height: 64,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        backgroundColor: MyColors.bluePrimary,
+                                        valueColor: AlwaysStoppedAnimation(
+                                            MyColors.yellowSecond),
+                                      ),
+                                    ),
+                                  ),
                                   errorWidget: (context, url, error) =>
-                                      WebsafeSvg.asset(MyApps.pathAssetsImages(
-                                          "img_placeholder_small.svg")),
+                                      WebsafeSvg.asset(
+                                          MyApps.pathAssetsImages(
+                                              "img_placeholder_large.svg"),
+                                          fit: BoxFit.fitHeight,
+                                          height: 96),
                                 ),
                               ),
                             ),
