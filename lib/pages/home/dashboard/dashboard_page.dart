@@ -135,7 +135,6 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
               ),
             ),
             _artikelTerbaru(context),
-            SizedBox(height: 8),
           ],
         ),
       ),
