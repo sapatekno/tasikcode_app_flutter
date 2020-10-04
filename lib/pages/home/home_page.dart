@@ -1,26 +1,28 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/pages/home/baraya/baraya_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/blog_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/event/event_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/home_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
 import 'package:websafe_svg/websafe_svg.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends BaseStatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends BaseState<HomePage, HomePresenter> {
   int _selectedIndex = 0;
 
   List<Widget> _widgetOptions = <Widget>[
     DashboardPage(),
     BlogPage(),
-    _eventBody(),
+    EventPage(),
     BarayaPage(),
   ];
 
@@ -69,12 +71,9 @@ class _HomePageState extends State<HomePage> {
             color: MyColors.bluePrimary,
           ),
           onPressed: () {
-            Flushbar(
-              flushbarPosition: FlushbarPosition.BOTTOM,
-              message: "Belum ada notifikasi terbaru",
-              backgroundColor: MyColors.bluePrimary,
-              duration: Duration(seconds: 3),
-            ).show(context);
+            showAlert(
+                message: "Belum ada notifikasi terbaru",
+                color: MyColors.bluePrimary);
           },
         )
       ],
@@ -90,7 +89,7 @@ class _HomePageState extends State<HomePage> {
       selectedItemColor: MyColors.bluePrimary,
       unselectedItemColor: MyColors.grey,
       currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
+      onTap: onItemTapped,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(FontAwesome.home),
@@ -105,45 +104,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _onItemTapped(int index) {
+  onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  static _eventBody() {
-    return Container(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            WebsafeSvg.asset(
-              MyApps.pathAssetsImages("tcode_logo_small.svg"),
-              width: 72,
-              height: 72,
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Coming ",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: MyColors.bluePrimary),
-                ),
-                Text(
-                  "Soon",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: MyColors.yellowSecond),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
   }
 }
