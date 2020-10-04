@@ -14,18 +14,12 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
     implements BarayaContract {
   final _key = UniqueKey();
 
-  // BarayaPresenter _presenter;
-
   String _initialUrl;
   num _stackToView = 1;
 
   @override
   void initState() {
     super.initState();
-    // ! Reserved
-    // _presenter = new BarayaPresenter(this);
-    // ignore: invalid_use_of_protected_member
-    // _presenter.setView(this);
     _initialUrl = "https://baraya.tasikcode.xyz";
   }
 
@@ -34,36 +28,36 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
     return IndexedStack(
       index: _stackToView,
       children: [
-        widgetWebview(context),
-        widgetLoading(context),
+        _webview(context),
+        _loading(context),
       ],
     );
   }
 
-  widgetWebview(BuildContext context) {
+  _webview(BuildContext context) {
     return Column(
       children: <Widget>[
         Expanded(
           child: _initialUrl != null
               ? WebView(
-            key: _key,
+                  key: _key,
                   javascriptMode: JavascriptMode.unrestricted,
                   initialUrl: _initialUrl,
                   onWebViewCreated: (WebViewController webViewController) {},
-                  onPageFinished: _handleLoad,
+                  onPageFinished: handleLoad,
                   navigationDelegate: (NavigationRequest request) {
                     print('blocking navigation to $request}');
-                    _launchURL(request.url);
+                    launchURL(request.url);
                     return NavigationDecision.prevent;
                   },
                 )
-              : widgetLoading(context),
+              : _loading(context),
         ),
       ],
     );
   }
 
-  widgetLoading(BuildContext context) {
+  _loading(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Center(
@@ -75,13 +69,13 @@ class _BarayaPageState extends BaseState<BarayaPage, BarayaPresenter>
     );
   }
 
-  _handleLoad(String value) async {
+  handleLoad(String value) async {
     setState(() {
       _stackToView = 0;
     });
   }
 
-  _launchURL(String url) async {
+  launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
