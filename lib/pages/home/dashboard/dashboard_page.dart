@@ -39,14 +39,14 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
 
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // ? Masih Bingung Mau Nampilin Gambar Apa :D
-            InkWell(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // ? Masih Bingung Mau Nampilin Gambar Apa :D
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: GestureDetector(
               onTap: () {
                 showDialog(
                   barrierDismissible: false,
@@ -95,7 +95,7 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                 );
               },
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
                 child: CachedNetworkImage(
                   fit: BoxFit.fitWidth,
                   imageUrl: _imageURL,
@@ -122,21 +122,24 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text(
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
               "Artikel Terbaru",
               style: TextStyle(fontSize: 16),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Container(
-                color: MyColors.blueSoft,
-                height: 1,
-              ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              color: MyColors.blueSoft,
+              height: 1,
             ),
-            _artikelTerbaru(context),
-          ],
-        ),
+          ),
+          SizedBox(height: 8),
+          _artikelTerbaru(context),
+        ],
       ),
     );
   }
@@ -156,127 +159,123 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                 String dateFormatted = DateFormat("dd MMMM yyyy")
                     .format(snapshot.data[index].date);
 
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 16),
-                  child: Container(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BlogDetailPage(
-                                  postData: snapshot.data[index])),
-                        );
-                      },
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.fitWidth,
-                                  imageUrl: snapshot.data[index].embedded
-                                          .wpFeaturedmedia?.first?.sourceUrl ??
-                                      "",
-                                  placeholder: (context, url) => Container(
-                                    width: 64,
-                                    height: 64,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        backgroundColor: MyColors.bluePrimary,
-                                        valueColor: AlwaysStoppedAnimation(
-                                            MyColors.yellowSecond),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              BlogDetailPage(postData: snapshot.data[index])),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.fitWidth,
+                                imageUrl: snapshot.data[index].embedded
+                                    .wpFeaturedmedia?.first?.sourceUrl ??
+                                    "",
+                                placeholder: (context, url) =>
+                                    Container(
+                                      width: 64,
+                                      height: 64,
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: MyColors.bluePrimary,
+                                          valueColor: AlwaysStoppedAnimation(
+                                              MyColors.yellowSecond),
+                                        ),
                                       ),
                                     ),
+                                errorWidget: (context, url, error) =>
+                                    WebsafeSvg.asset(
+                                        MyApps.pathAssetsImages(
+                                            "img_placeholder_large.svg"),
+                                        fit: BoxFit.fitHeight,
+                                        height: 96),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 16),
+                                  child: HtmlWidget(
+                                    snapshot.data[index].title.rendered ?? "-",
+                                    textStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      WebsafeSvg.asset(
-                                          MyApps.pathAssetsImages(
-                                              "img_placeholder_large.svg"),
-                                          fit: BoxFit.fitHeight,
-                                          height: 96),
                                 ),
-                              ),
+                                // ! Sudah Bisa menampilkan lebih dari 1 kategori cuma belum rapih
+                                Container(
+                                  height: 24,
+                                  width: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width,
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      primary: false,
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: snapshot.data[index].embedded
+                                          .wpTerm.first.length,
+                                      itemBuilder:
+                                          (BuildContext context, int position) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(right: 4),
+                                          child: Text(
+                                            snapshot.data[index].embedded.wpTerm
+                                                .first[position].name +
+                                                (snapshot
+                                                    .data[index]
+                                                    .embedded
+                                                    .wpTerm
+                                                    .first
+                                                    .last
+                                                    .id ==
+                                                    snapshot
+                                                        .data[index]
+                                                        .embedded
+                                                        .wpTerm
+                                                        .first[position]
+                                                        .id
+                                                    ? ""
+                                                    : ",") ??
+                                                "-",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.blueGrey),
+                                          ),
+                                        );
+                                      }),
+                                ),
+                                Text(
+                                  dateFormatted ?? "-",
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.blueGrey),
+                                ),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            flex: 3,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 16),
-                                    child: HtmlWidget(
-                                      snapshot.data[index].title.rendered ??
-                                          "-",
-                                      textStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14),
-                                    ),
-                                  ),
-                                  // ! Sudah Bisa menampilkan lebih dari 1 kategori cuma belum rapih
-                                  Container(
-                                    height: 24,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        primary: false,
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: snapshot.data[index].embedded
-                                            .wpTerm.first.length,
-                                        itemBuilder: (BuildContext context,
-                                            int position) {
-                                          return Padding(
-                                            padding: EdgeInsets.only(right: 4),
-                                            child: Text(
-                                              snapshot
-                                                  .data[index]
-                                                  .embedded
-                                                  .wpTerm
-                                                  .first[position]
-                                                  .name +
-                                                  (snapshot
-                                                      .data[index]
-                                                      .embedded
-                                                      .wpTerm
-                                                      .first
-                                                      .last
-                                                      .id ==
-                                                      snapshot
-                                                          .data[index]
-                                                          .embedded
-                                                          .wpTerm
-                                                          .first[
-                                                      position]
-                                                          .id
-                                                      ? ""
-                                                      : ",") ??
-                                                  "-",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.blueGrey),
-                                            ),
-                                          );
-                                        }),
-                                  ),
-                                  Text(
-                                    dateFormatted ?? "-",
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.blueGrey),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 );
