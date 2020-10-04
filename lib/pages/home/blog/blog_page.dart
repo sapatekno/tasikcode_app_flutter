@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -27,10 +28,13 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   bool isLoading = false;
   bool isError = false;
   String errorMessage = "";
+  String searchText = "";
   int _page = 1;
   int _totalPages = 0;
+
   RefreshController _refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
+  TextEditingController _searchTextController = TextEditingController();
 
   @override
   void initState() {
@@ -51,8 +55,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _searchBody(context),
             _categoriesBody(context),
-            SizedBox(height: 16),
             _postsBody(context),
           ],
         ),
@@ -97,7 +101,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
       height: MediaQuery
           .of(context)
           .size
-          .height - 200,
+          .height - 285,
       child: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
@@ -152,16 +156,16 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                     children: <Widget>[
                       Expanded(
                         flex: 2,
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 8),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.fitWidth,
-                                        imageUrl: _posts[index]
-                                                .embedded
-                                                .wpFeaturedmedia
+                        child: Padding(
+                          padding:
+                          EdgeInsets.symmetric(horizontal: 8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: CachedNetworkImage(
+                              fit: BoxFit.fitWidth,
+                              imageUrl: _posts[index]
+                                  .embedded
+                                  .wpFeaturedmedia
                                                 ?.first
                                                 ?.sourceUrl ??
                                             "",
@@ -178,16 +182,16 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                                                       MyColors.yellowSecond),
                                             ),
                                           ),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            WebsafeSvg.asset(
-                                                MyApps.pathAssetsImages(
-                                                    "img_placeholder_large.svg"),
-                                                fit: BoxFit.fitHeight,
-                                                height: 96),
-                                      ),
-                                    ),
-                                  ),
+                                            ),
+                              errorWidget: (context, url, error) =>
+                                  WebsafeSvg.asset(
+                                      MyApps.pathAssetsImages(
+                                          "img_placeholder_large.svg"),
+                                      fit: BoxFit.fitHeight,
+                                      height: 96),
+                            ),
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 3,
@@ -307,47 +311,75 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   }
 
   _categoriesBody(BuildContext context) {
-    return Container(
-      height: 32,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
-      child: ListView.builder(
-          primary: false,
-          shrinkWrap: true,
-          itemCount: _categories.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: EdgeInsets.only(right: 8),
-              child: ButtonTheme(
-                buttonColor: index == position
-                    ? MyColors.bluePrimary
-                    : MyColors.yellowSecond,
-                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                minWidth: 0,
-                height: 0,
-                child: RaisedButton(
-                  onPressed: () {
-                    setState(() {
-                      _page = 1;
-                      _refreshController.loadComplete();
-                      position = index;
-                      _presenter.getPosts(catID: _categories[index].id);
-                    });
-                  },
-                  child: Text(
-                    "#${_categories[index].name.toUpperCase()}",
-                    style: TextStyle(
-                        color: index == position ? Colors.white : Colors.black,
-                        fontSize: 12),
-                  ),
-                ), //your original button
+    return searchText.isNotEmpty
+        ? Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 16),
+          child: ButtonTheme(
+            buttonColor: MyColors.bluePrimary,
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minWidth: 0,
+            height: 32,
+            child: RaisedButton(
+              onPressed: () {},
+              child: Text(
+                "#PENCARIAN",
+                style: TextStyle(color: Colors.white, fontSize: 12),
               ),
-            );
-          }),
+            ), //your original button
+          ),
+        ),
+      ],
+    )
+        : Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Container(
+        height: 32,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        child: ListView.builder(
+            primary: false,
+            shrinkWrap: true,
+            itemCount: _categories.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: ButtonTheme(
+                  buttonColor: index == position
+                      ? MyColors.bluePrimary
+                      : MyColors.yellowSecond,
+                  padding: EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minWidth: 0,
+                  height: 0,
+                  child: RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        _page = 1;
+                        _refreshController.loadComplete();
+                        position = index;
+                        _presenter.getPosts(catID: _categories[index].id);
+                      });
+                    },
+                    child: Text(
+                      "#${_categories[index].name.toUpperCase()}",
+                      style: TextStyle(
+                          color: index == position
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12),
+                    ),
+                  ), //your original button
+                ),
+              );
+            }),
+      ),
     );
   }
 
@@ -398,5 +430,61 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     } else {
       _refreshController.loadNoData();
     }
+  }
+
+  _searchBody(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 16),
+            child: Icon(
+              FontAwesome.search,
+              color: MyColors.bluePrimary,
+              size: 20,
+            ),
+          ),
+          Expanded(
+            child: TextField(
+              controller: _searchTextController,
+              onSubmitted: (inputValue) {
+                inputValue = inputValue.toLowerCase().trim();
+
+                setState(() {
+                  searchText = inputValue;
+                });
+              },
+              style: TextStyle(color: MyColors.bluePrimary, fontSize: 16),
+              decoration: InputDecoration(
+                hintText: 'Apa yang anda cari',
+                hintStyle: TextStyle(color: Colors.grey, fontSize: 16),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          searchText.isNotEmpty
+              ? Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: IconButton(
+              icon: Icon(
+                FontAwesome.close,
+                color: Colors.red,
+                size: 20,
+              ),
+              onPressed: () {
+                setState(() {
+                  _searchTextController.text = "";
+                  searchText = "";
+                });
+              },
+            ),
+          )
+              : Container(),
+        ],
+      ),
+    );
   }
 }
