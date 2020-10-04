@@ -30,7 +30,8 @@ class BlogDetailPage extends BaseStatefulWidget {
   _BlogDetailPageState createState() => _BlogDetailPageState();
 }
 
-class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter>
+class _BlogDetailPageState
+    extends BaseState<BlogDetailPage, BlogDetailPresenter>
     implements BlogDetailContract {
   PostModel postData;
   String dateFormatted;
@@ -108,7 +109,7 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
 
   _body(BuildContext context) {
     String featuredImage =
-    (postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "");
+        (postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "");
 
     return SingleChildScrollView(
       child: Container(
@@ -164,16 +165,17 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
                 ? Container()
                 : Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
-                    child: InkWell(
-                      onTap: () => _popUpImage(featuredImage),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.fitWidth,
-                          imageUrl: featuredImage,
-                          placeholder: (context, url) => Container(
-                              child: Center(
-                                  child: CircularProgressIndicator(
+              child: InkWell(
+                onTap: () => _popUpImage(featuredImage),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.fitWidth,
+                    imageUrl: featuredImage,
+                    placeholder: (context, url) =>
+                        Container(
+                            child: Center(
+                                child: CircularProgressIndicator(
                             backgroundColor: MyColors.bluePrimary,
                             valueColor:
                                 AlwaysStoppedAnimation(MyColors.yellowSecond),
@@ -304,9 +306,9 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
             color: Colors.red);
       }
     } else if (status.isUndetermined) {
-      _askStoragePermission(status, imageUrl);
+      _askStoragePermission(imageUrl);
     } else if (status.isDenied) {
-      _askStoragePermission(status, imageUrl);
+      _askStoragePermission(imageUrl);
     } else if (status.isRestricted || status.isPermanentlyDenied) {
       showAlert(
           message: "Berikan hak akses untuk penyimpanan",
@@ -316,8 +318,10 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
     }
   }
 
-  _askStoragePermission(PermissionStatus status, String imageUrl) async {
+  _askStoragePermission(String imageUrl) async {
     await Permission.storage.request();
+    var status = await Permission.storage.status;
+
     if (status.isGranted) {
       _saveImageToGallery(imageUrl);
     } else {
