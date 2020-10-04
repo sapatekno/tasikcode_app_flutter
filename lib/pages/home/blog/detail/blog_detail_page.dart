@@ -22,7 +22,8 @@ class BlogDetailPage extends BaseStatefulWidget {
   _BlogDetailPageState createState() => _BlogDetailPageState();
 }
 
-class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter>
+class _BlogDetailPageState
+    extends BaseState<BlogDetailPage, BlogDetailPresenter>
     implements BlogDetailContract {
   PostModel postData;
   String dateFormatted;
@@ -97,6 +98,9 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
   }
 
   _body(BuildContext context) {
+    String featuredImage =
+        (postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "");
+
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(16),
@@ -137,32 +141,39 @@ class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter
                     child: Text(
                       postData.embedded.author.first.name ?? "-",
                       style: TextStyle(fontSize: 14, color: Colors.red),
-                          ),
-                        )
+                    ),
+                  )
                       : Text(
-                          postData.embedded.author.first.name ?? "-",
-                          style: TextStyle(
-                              fontSize: 14, color: MyColors.bluePrimary),
-                        ),
+                    postData.embedded.author.first.name ?? "-",
+                    style: TextStyle(
+                        fontSize: 14, color: MyColors.bluePrimary),
+                  ),
                 ],
               ),
             ),
-            Padding(
+            featuredImage.isEmpty
+                ? Container()
+                : Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: CachedNetworkImage(
                   fit: BoxFit.fitWidth,
-                  imageUrl:
-                      postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "",
-                  placeholder: (context, url) => Container(
-                      child: Center(
-                          child: CircularProgressIndicator(
-                    backgroundColor: MyColors.bluePrimary,
-                    valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
-                  ))),
-                  errorWidget: (context, url, error) => WebsafeSvg.asset(
-                      MyApps.pathAssetsImages("img_placeholder_small.svg")),
+                  imageUrl: featuredImage,
+                  placeholder: (context, url) =>
+                      Container(
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                backgroundColor: MyColors.bluePrimary,
+                                valueColor:
+                                AlwaysStoppedAnimation(MyColors.yellowSecond),
+                              ))),
+                  errorWidget: (context, url, error) =>
+                      WebsafeSvg.asset(
+                        MyApps.pathAssetsImages("img_placeholder_large.svg"),
+                        fit: BoxFit.fitWidth,
+                        height: 200,
+                      ),
                 ),
               ),
             ),
