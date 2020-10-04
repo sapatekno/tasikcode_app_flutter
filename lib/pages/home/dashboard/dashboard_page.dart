@@ -100,14 +100,17 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                   fit: BoxFit.fitWidth,
                   imageUrl: _imageURL,
                   placeholder: (context, url) => Container(
-                      child: Padding(
-                    padding: EdgeInsets.all(64),
-                    child: Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(64),
+                      child: Center(
                         child: CircularProgressIndicator(
-                      backgroundColor: MyColors.bluePrimary,
-                      valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
-                    )),
-                  )),
+                          backgroundColor: MyColors.bluePrimary,
+                          valueColor:
+                              AlwaysStoppedAnimation(MyColors.yellowSecond),
+                        ),
+                      ),
+                    ),
+                  ),
                   errorWidget: (context, url, error) => Padding(
                     padding: EdgeInsets.all(64),
                     child: Container(

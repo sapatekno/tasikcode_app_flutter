@@ -12,11 +12,14 @@ dependencies:
 
   cached_network_image: ^2.3.2+1
   cupertino_icons: ^1.0.0
+  dio: ^3.0.10
   flushbar: ^1.10.4
   flutter_icons: ^1.1.0
   flutter_html: ^1.0.2
   flutter_widget_from_html_core: ^0.5.0+6
   google_fonts: ^1.1.0
+  image_gallery_saver: ^1.5.0
+  permission_handler: ^5.0.1+1
   pull_to_refresh: ^1.6.2
   url_launcher: ^5.7.2
   websafe_svg: ^1.1.4

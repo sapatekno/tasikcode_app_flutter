@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -6,7 +10,9 @@ import 'package:flutter_html/style.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_presenter.dart';
@@ -24,8 +30,7 @@ class BlogDetailPage extends BaseStatefulWidget {
   _BlogDetailPageState createState() => _BlogDetailPageState();
 }
 
-class _BlogDetailPageState
-    extends BaseState<BlogDetailPage, BlogDetailPresenter>
+class _BlogDetailPageState extends BaseState<BlogDetailPage, BlogDetailPresenter>
     implements BlogDetailContract {
   PostModel postData;
   String dateFormatted;
@@ -103,7 +108,7 @@ class _BlogDetailPageState
 
   _body(BuildContext context) {
     String featuredImage =
-        (postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "");
+    (postData.embedded.wpFeaturedmedia?.first?.sourceUrl ?? "");
 
     return SingleChildScrollView(
       child: Container(
@@ -133,61 +138,69 @@ class _BlogDetailPageState
                   ),
                   postData.embedded.author.first.url.isNotEmpty
                       ? InkWell(
-                          onTap: () async {
-                            if (await canLaunch(
-                                postData.embedded.author.first.url)) {
-                              await launch(postData.embedded.author.first.url,
-                                  forceSafariVC: false, forceWebView: false);
-                            } else {
-                              print("url - cant open url");
-                            }
-                          },
-                          child: Text(
-                            postData.embedded.author.first.name ?? "-",
-                            style: TextStyle(fontSize: 14, color: Colors.red),
-                          ),
-                        )
+                    onTap: () async {
+                      if (await canLaunch(
+                          postData.embedded.author.first.url)) {
+                        await launch(postData.embedded.author.first.url,
+                            forceSafariVC: false, forceWebView: false);
+                      } else {
+                        print("url - cant open url");
+                      }
+                    },
+                    child: Text(
+                      postData.embedded.author.first.name ?? "-",
+                      style: TextStyle(fontSize: 14, color: Colors.red),
+                    ),
+                  )
                       : Text(
-                          postData.embedded.author.first.name ?? "-",
-                          style: TextStyle(
-                              fontSize: 14, color: MyColors.bluePrimary),
-                        ),
+                    postData.embedded.author.first.name ?? "-",
+                    style: TextStyle(
+                        fontSize: 14, color: MyColors.bluePrimary),
+                  ),
                 ],
               ),
             ),
             featuredImage.isEmpty
                 ? Container()
                 : Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fitWidth,
-                        imageUrl: featuredImage,
-                        placeholder: (context, url) => Container(
-                            child: Center(
-                                child: CircularProgressIndicator(
-                          backgroundColor: MyColors.bluePrimary,
-                          valueColor:
-                              AlwaysStoppedAnimation(MyColors.yellowSecond),
-                        ))),
-                        errorWidget: (context, url, error) => WebsafeSvg.asset(
-                          MyApps.pathAssetsImages("img_placeholder_large.svg"),
+              padding: EdgeInsets.symmetric(vertical: 16),
+                    child: InkWell(
+                      onTap: () => _popUpImage(featuredImage),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: CachedNetworkImage(
                           fit: BoxFit.fitWidth,
-                          height: 200,
+                          imageUrl: featuredImage,
+                          placeholder: (context, url) => Container(
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                            backgroundColor: MyColors.bluePrimary,
+                            valueColor:
+                                AlwaysStoppedAnimation(MyColors.yellowSecond),
+                          ))),
+                          errorWidget: (context, url, error) =>
+                              WebsafeSvg.asset(
+                            MyApps.pathAssetsImages(
+                                "img_placeholder_large.svg"),
+                            fit: BoxFit.fitWidth,
+                            height: 200,
+                          ),
                         ),
                       ),
                     ),
                   ),
             Html(
               data:
-                  "<style>pre{color:red;}</style>" + postData.content.rendered,
+              "<style>pre{color:red;}</style>" + postData.content.rendered,
               onLinkTap: (url) async {
                 if (await canLaunch(url)) {
                   await launch(url, forceSafariVC: false, forceWebView: false);
                 } else {
                   print("url - cant open url");
                 }
+              },
+              onImageTap: (imageUrl) {
+                _popUpImage(imageUrl);
               },
               style: {
                 "blockquote": Style(
@@ -203,5 +216,114 @@ class _BlogDetailPageState
         ),
       ),
     );
+  }
+
+  _popUpImage(String imageUrl) {
+    return showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctxStateful, setState) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: CachedNetworkImage(
+                      fit: BoxFit.fitWidth,
+                      imageUrl: imageUrl,
+                      placeholder: (context, url) =>
+                          Container(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              height: 64,
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: MyColors.bluePrimary,
+                                    valueColor:
+                                    AlwaysStoppedAnimation(
+                                        MyColors.yellowSecond),
+                                  ))),
+                      errorWidget: (context, url, error) =>
+                          WebsafeSvg.asset(
+                            MyApps.pathAssetsImages(
+                                "img_placeholder_large.svg"),
+                            fit: BoxFit.fitWidth,
+                            height: 200,
+                          ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FlatButton(
+                        color: MyColors.yellowSecond,
+                        onPressed: () => _saveImageToGallery(imageUrl),
+                        child: Text("Simpan ke Galeri"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  _saveImageToGallery(String imageUrl) async {
+    var status = await Permission.storage.status;
+
+    if (status.isGranted) {
+      // * Akses Storage diterima, simpan gambar ke galeri
+
+      File file = new File(imageUrl);
+      String baseName = file.path
+          .split("/")
+          .last;
+
+      try {
+        var response = await Dio()
+            .get(imageUrl, options: Options(responseType: ResponseType.bytes));
+        await ImageGallerySaver.saveImage(Uint8List.fromList(response.data),
+            quality: 90, name: baseName);
+
+        Navigator.pop(context);
+        showAlert(
+            message: "Gambar berhasil disimpan", color: MyColors.bluePrimary);
+      } catch (error) {
+        showAlert(
+            message: "Tidak dapat menyimpan gambar, silahkan coba lagi",
+            color: Colors.red);
+      }
+    } else if (status.isUndetermined) {
+      _askStoragePermission(status, imageUrl);
+    } else if (status.isDenied) {
+      _askStoragePermission(status, imageUrl);
+    } else if (status.isRestricted || status.isPermanentlyDenied) {
+      showAlert(
+          message: "Berikan hak akses untuk penyimpanan",
+          color: MyColors.bluePrimary);
+      await Future.delayed(Duration(seconds: 2));
+      openAppSettings();
+    }
+  }
+
+  _askStoragePermission(PermissionStatus status, String imageUrl) async {
+    await Permission.storage.request();
+    if (status.isGranted) {
+      _saveImageToGallery(imageUrl);
+    } else {
+      showAlert(
+          message: "Tidak dapat menyimpan gambar tanpa akses.",
+          color: Colors.red);
+    }
   }
 }
