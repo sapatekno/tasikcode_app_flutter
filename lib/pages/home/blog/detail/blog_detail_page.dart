@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -34,6 +36,8 @@ class _BlogDetailPageState
 
     postData = widget.postData;
     dateFormatted = DateFormat("dd MMMM yyyy").format(postData.date);
+
+    print("check ${postData.content.rendered}");
   }
 
   @override
@@ -129,65 +133,70 @@ class _BlogDetailPageState
                   ),
                   postData.embedded.author.first.url.isNotEmpty
                       ? InkWell(
-                    onTap: () async {
-                      if (await canLaunch(
-                          postData.embedded.author.first.url)) {
-                        await launch(postData.embedded.author.first.url,
-                            forceSafariVC: false, forceWebView: false);
-                      } else {
-                        print("url - cant open url");
-                      }
-                    },
-                    child: Text(
-                      postData.embedded.author.first.name ?? "-",
-                      style: TextStyle(fontSize: 14, color: Colors.red),
-                    ),
-                  )
+                          onTap: () async {
+                            if (await canLaunch(
+                                postData.embedded.author.first.url)) {
+                              await launch(postData.embedded.author.first.url,
+                                  forceSafariVC: false, forceWebView: false);
+                            } else {
+                              print("url - cant open url");
+                            }
+                          },
+                          child: Text(
+                            postData.embedded.author.first.name ?? "-",
+                            style: TextStyle(fontSize: 14, color: Colors.red),
+                          ),
+                        )
                       : Text(
-                    postData.embedded.author.first.name ?? "-",
-                    style: TextStyle(
-                        fontSize: 14, color: MyColors.bluePrimary),
-                  ),
+                          postData.embedded.author.first.name ?? "-",
+                          style: TextStyle(
+                              fontSize: 14, color: MyColors.bluePrimary),
+                        ),
                 ],
               ),
             ),
             featuredImage.isEmpty
                 ? Container()
                 : Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: CachedNetworkImage(
-                  fit: BoxFit.fitWidth,
-                  imageUrl: featuredImage,
-                  placeholder: (context, url) =>
-                      Container(
-                          child: Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: MyColors.bluePrimary,
-                                valueColor:
-                                AlwaysStoppedAnimation(MyColors.yellowSecond),
-                              ))),
-                  errorWidget: (context, url, error) =>
-                      WebsafeSvg.asset(
-                        MyApps.pathAssetsImages("img_placeholder_large.svg"),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: CachedNetworkImage(
                         fit: BoxFit.fitWidth,
-                        height: 200,
+                        imageUrl: featuredImage,
+                        placeholder: (context, url) => Container(
+                            child: Center(
+                                child: CircularProgressIndicator(
+                          backgroundColor: MyColors.bluePrimary,
+                          valueColor:
+                              AlwaysStoppedAnimation(MyColors.yellowSecond),
+                        ))),
+                        errorWidget: (context, url, error) => WebsafeSvg.asset(
+                          MyApps.pathAssetsImages("img_placeholder_large.svg"),
+                          fit: BoxFit.fitWidth,
+                          height: 200,
+                        ),
                       ),
-                ),
-              ),
-            ),
-            HtmlWidget(
-              postData.content.rendered ?? "-",
-              enableCaching: true,
-              textStyle: TextStyle(fontSize: 16, color: Colors.black),
-              hyperlinkColor: MyColors.yellowSecond,
-              onTapUrl: (url) async {
+                    ),
+                  ),
+            Html(
+              data:
+                  "<style>pre{color:red;}</style>" + postData.content.rendered,
+              onLinkTap: (url) async {
                 if (await canLaunch(url)) {
                   await launch(url, forceSafariVC: false, forceWebView: false);
                 } else {
                   print("url - cant open url");
                 }
+              },
+              style: {
+                "blockquote": Style(
+                  padding: EdgeInsets.only(left: 8),
+                  border: Border(
+                    left: BorderSide(color: MyColors.bluePrimary, width: 4),
+                  ),
+                ),
+                "ul": Style(color: Colors.white),
               },
             ),
           ],

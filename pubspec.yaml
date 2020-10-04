@@ -1,7 +1,7 @@
 name: tasikcode_app_flutter
 description: Mobile Apps for TasikCode Community
 
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -14,12 +14,13 @@ dependencies:
   cupertino_icons: ^1.0.0
   flushbar: ^1.10.4
   flutter_icons: ^1.1.0
+  flutter_html: ^1.0.2
   flutter_widget_from_html_core: ^0.5.0+6
   google_fonts: ^1.1.0
   pull_to_refresh: ^1.6.2
   url_launcher: ^5.7.2
   websafe_svg: ^1.1.4
-  webview_flutter: ^1.0.0
+  webview_flutter: ^0.3.22+1
 
 dev_dependencies:
   flutter_test:
