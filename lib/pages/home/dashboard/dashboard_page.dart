@@ -281,9 +281,12 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                 );
               });
         } else if (snapshot.hasError) {
-          childData = Text(
-            "Tidak dapat mengambil Artikel Terbaru",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+          childData = Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Tidak dapat mengambil Artikel Terbaru",
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            ),
           );
         } else {
           childData = Padding(
