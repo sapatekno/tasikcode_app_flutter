@@ -179,18 +179,17 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
+                              borderRadius: BorderRadius.circular(8),
                               child: CachedNetworkImage(
                                 fit: BoxFit.fitWidth,
                                 imageUrl: snapshot.data[index].embedded
-                                    .wpFeaturedmedia?.first?.sourceUrl ??
+                                        .wpFeaturedmedia?.first?.sourceUrl ??
                                     "",
-                                placeholder: (context, url) =>
-                                    Container(
-                                      width: 64,
-                                      height: 64,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
+                                placeholder: (context, url) => Container(
+                                  width: 64,
+                                  height: 64,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
                                           backgroundColor: MyColors.bluePrimary,
                                           valueColor: AlwaysStoppedAnimation(
                                               MyColors.yellowSecond),

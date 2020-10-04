@@ -154,46 +154,39 @@ class _BlogDetailPageState
                     ),
                   )
                       : Text(
-                    postData.embedded.author.first.name ?? "-",
-                    style: TextStyle(
-                        fontSize: 14, color: MyColors.bluePrimary),
-                  ),
+                          postData.embedded.author.first.name ?? "-",
+                          style: TextStyle(
+                              fontSize: 14, color: MyColors.bluePrimary),
+                        ),
                 ],
               ),
             ),
             featuredImage.isEmpty
                 ? Container()
-                : Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: InkWell(
-                onTap: () => _popUpImage(featuredImage),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: CachedNetworkImage(
-                    fit: BoxFit.fitWidth,
-                    imageUrl: featuredImage,
-                    placeholder: (context, url) =>
-                        Container(
+                : InkWell(
+                    onTap: () => _popUpImage(featuredImage),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.fitWidth,
+                        imageUrl: featuredImage,
+                        placeholder: (context, url) => Container(
                             child: Center(
                                 child: CircularProgressIndicator(
-                            backgroundColor: MyColors.bluePrimary,
-                            valueColor:
-                                AlwaysStoppedAnimation(MyColors.yellowSecond),
-                          ))),
-                          errorWidget: (context, url, error) =>
-                              WebsafeSvg.asset(
-                            MyApps.pathAssetsImages(
-                                "img_placeholder_large.svg"),
-                            fit: BoxFit.fitWidth,
-                            height: 200,
-                          ),
+                          backgroundColor: MyColors.bluePrimary,
+                          valueColor:
+                              AlwaysStoppedAnimation(MyColors.yellowSecond),
+                        ))),
+                        errorWidget: (context, url, error) => WebsafeSvg.asset(
+                          MyApps.pathAssetsImages("img_placeholder_large.svg"),
+                          fit: BoxFit.fitWidth,
+                          height: 200,
                         ),
                       ),
                     ),
                   ),
             Html(
-              data:
-              "<style>pre{color:red;}</style>" + postData.content.rendered,
+              data: postData.content.rendered,
               onLinkTap: (url) async {
                 if (await canLaunch(url)) {
                   await launch(url, forceSafariVC: false, forceWebView: false);
@@ -233,7 +226,7 @@ class _BlogDetailPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
                       fit: BoxFit.fitWidth,
                       imageUrl: imageUrl,

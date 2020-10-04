@@ -14,6 +14,8 @@ abstract class BlogContract extends BaseContract {
   void setLoading(bool status);
 
   void showError(String message);
+
+  void showErrorCategories() {}
 }
 
 class BlogPresenter extends BasePresenter {
@@ -21,11 +23,11 @@ class BlogPresenter extends BasePresenter {
 
   BlogPresenter(this._view);
 
-  void getPosts(
-      {num catID = 0,
-      bool isRefresh = false,
-      bool isLoad = false,
-      int page = 1}) async {
+  void getPosts({num catID = 0,
+    bool isRefresh = false,
+    bool isLoad = false,
+    int page = 1,
+    String searchText = ""}) async {
     print("is load adalah $isLoad");
 
     // ? tidak bisa pake OR ??
@@ -37,7 +39,11 @@ class BlogPresenter extends BasePresenter {
 
     String url =
         "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=5&_embed&page=$page" +
-            (catID != 0 ? "&categories=$catID" : "");
+            (catID != 0
+                ? "&categories=$catID"
+                : searchText.isEmpty
+                ? ""
+                : "&search=$searchText");
 
     final response = await http.get(url).catchError((error) {
       _view.showError("Gagal mengambil data.");
@@ -61,12 +67,14 @@ class BlogPresenter extends BasePresenter {
 
   void getCategories() async {
     String url = "http://blog.tasikcode.xyz/wp-json/wp/v2/categories";
-    final response = await http.get(url);
+    final response = await http.get(url).catchError((error) {
+      _view.showErrorCategories();
+    });
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       List<CategoryModel> result =
-          List<CategoryModel>.from(data.map((i) => CategoryModel.fromJson(i)));
+      List<CategoryModel>.from(data.map((i) => CategoryModel.fromJson(i)));
       _view.loadCategories(result);
     } else {
       // ! Error for programmers
