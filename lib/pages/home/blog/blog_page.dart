@@ -48,8 +48,12 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     // ignore: invalid_use_of_protected_member
     _presenter.setView(this);
 
-    _categories.add(CategoryModel(id: 0, name: "SEMUA"));
-    _categories.add(CategoryModel(id: 0, name: "LOADING"));
+    _categories.add(
+      CategoryModel(id: 0, name: "SEMUA"),
+    );
+    _categories.add(
+      CategoryModel(id: 0, name: "LOADING"),
+    );
 
     _presenter.getCategories();
     _presenter.getPosts();
@@ -133,27 +137,27 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   _categoriesBody(BuildContext context) {
     return searchText.isNotEmpty
         ? Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
-          child: ButtonTheme(
-            buttonColor: MyColors.bluePrimary,
-            padding:
-            EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            minWidth: 0,
-            height: 32,
-            child: RaisedButton(
-              onPressed: () {},
-              child: Text(
-                "#PENCARIAN",
-                style: TextStyle(color: Colors.white, fontSize: 12),
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                child: ButtonTheme(
+                  buttonColor: MyColors.bluePrimary,
+                  padding:
+                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minWidth: 0,
+                  height: 32,
+                  child: RaisedButton(
+                    onPressed: () {},
+                    child: Text(
+                      "#PENCARIAN",
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ), //your original button
+                ),
               ),
-            ), //your original button
-          ),
-        ),
-      ],
-    )
+            ],
+          )
         : Padding(
       padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
       child: Container(
@@ -189,8 +193,9 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                       if (_categories[index].name == "RELOAD") {
                         setState(() {
                           _categories.removeLast();
-                          _categories
-                              .add(CategoryModel(id: 0, name: "LOADING"));
+                          _categories.add(
+                            CategoryModel(id: 0, name: "LOADING"),
+                          );
 
                           _presenter.getCategories();
                         });
@@ -218,13 +223,14 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                           fontSize: 12),
                     )
                         : SizedBox(
-                        width: 8,
-                        height: 8,
-                        child: CircularProgressIndicator(
-                          backgroundColor: MyColors.bluePrimary,
-                          valueColor: AlwaysStoppedAnimation(
-                              MyColors.yellowSecond),
-                        )),
+                      width: 8,
+                      height: 8,
+                      child: CircularProgressIndicator(
+                        backgroundColor: MyColors.bluePrimary,
+                        valueColor: AlwaysStoppedAnimation(
+                            MyColors.yellowSecond),
+                      ),
+                    ),
                   ), //your original button
                 ),
               );
@@ -238,6 +244,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
         ? _errorBody(context)
         : isLoading
         ? _loadingBody(context)
+        : _posts.length < 1
+        ? _noArticleBody(context)
         : Container(
       height: MediaQuery
           .of(context)
@@ -256,29 +264,32 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
           shrinkWrap: true,
           itemCount: (_posts.length ?? 0),
           itemBuilder: (BuildContext context, int index) {
-            String dateFormatted =
-            DateFormat("dd MMMM yyyy").format(_posts[index].date);
+            String dateFormatted = DateFormat("dd MMMM yyyy")
+                .format(_posts[index].date);
 
             return InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          BlogDetailPage(postData: _posts[index])),
+                    builder: (context) =>
+                        BlogDetailPage(postData: _posts[index]),
+                  ),
                 );
               },
               child: Padding(
-                padding:
-                EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                padding: EdgeInsets.symmetric(
+                    vertical: 8, horizontal: 8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Expanded(
                       flex: 2,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 8),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: CachedNetworkImage(
@@ -297,7 +308,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                                     child: CircularProgressIndicator(
                                       backgroundColor:
                                       MyColors.bluePrimary,
-                                      valueColor: AlwaysStoppedAnimation(
+                                      valueColor:
+                                      AlwaysStoppedAnimation(
                                           MyColors.yellowSecond),
                                     ),
                                   ),
@@ -315,15 +327,18 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                     Expanded(
                       flex: 3,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        padding:
+                        EdgeInsets.symmetric(horizontal: 8),
                         child: Column(
                           crossAxisAlignment:
                           CrossAxisAlignment.start,
                           children: <Widget>[
                             Padding(
-                              padding: EdgeInsets.only(bottom: 24),
+                              padding:
+                              EdgeInsets.only(bottom: 24),
                               child: HtmlWidget(
-                                _posts[index].title.rendered ?? "-",
+                                _posts[index].title.rendered ??
+                                    "-",
                                 textStyle: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14),
@@ -332,30 +347,32 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                             // ! Bisa menampilkan banyak kategori tapi masih belum clean code
                             Container(
                               height: 24,
-                              width:
-                              MediaQuery
+                              width: MediaQuery
                                   .of(context)
                                   .size
                                   .width,
                               child: ListView.builder(
                                   shrinkWrap: true,
                                   primary: false,
-                                  scrollDirection: Axis.horizontal,
+                                  scrollDirection:
+                                  Axis.horizontal,
                                   itemCount: _posts[index]
                                       .embedded
                                       .wpTerm
                                       .first
                                       .length,
-                                  itemBuilder: (BuildContext context,
+                                  itemBuilder:
+                                      (BuildContext context,
                                       int position) {
                                     return Padding(
-                                      padding:
-                                      EdgeInsets.only(right: 4),
+                                      padding: EdgeInsets.only(
+                                          right: 4),
                                       child: Text(
                                         _posts[index]
                                             .embedded
                                             .wpTerm
-                                            .first[position]
+                                            .first[
+                                        position]
                                             .name +
                                             (_posts[index]
                                                 .embedded
@@ -374,7 +391,8 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
                                             "-",
                                         style: TextStyle(
                                             fontSize: 12,
-                                            color: Colors.blueGrey),
+                                            color:
+                                            Colors.blueGrey),
                                       ),
                                     );
                                   }),
@@ -520,7 +538,9 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
       postsPlaceholder.add(post);
     }
 
-    return Column(children: postsPlaceholder,);
+    return Column(
+      children: postsPlaceholder,
+    );
   }
 
   @override
@@ -570,7 +590,9 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   void showErrorCategories() {
     setState(() {
       _categories.removeLast();
-      _categories.add(CategoryModel(id: 0, name: "RELOAD"));
+      _categories.add(
+        CategoryModel(id: 0, name: "RELOAD"),
+      );
     });
   }
 
@@ -609,5 +631,23 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
       searchText = "";
       _presenter.getPosts(catID: _categories[position].id);
     });
+  }
+
+  _noArticleBody(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            searchText.isNotEmpty
+                ? "Pencarian tidak ditemukan"
+                : "Tidak ada data",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
+          ),
+        ],
+      ),
+    );
   }
 }
