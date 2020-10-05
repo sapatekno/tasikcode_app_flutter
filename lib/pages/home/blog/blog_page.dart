@@ -159,84 +159,81 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
             ],
           )
         : Padding(
-      padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
-      child: Container(
-        height: 32,
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
-        child: ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: _categories.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: index == _categories.length - 1
-                    ? EdgeInsets.all(0)
-                    : EdgeInsets.only(right: 8),
-                child: ButtonTheme(
-                  buttonColor: _categories[index].name == "RELOAD"
-                      ? Colors.redAccent
-                      : _categories[index].name == "LOADING" ||
-                      index == position
-                      ? MyColors.bluePrimary
-                      : MyColors.yellowSecond,
-                  padding: EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  minWidth: 0,
-                  height: 0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      if (_categories[index].name == "RELOAD") {
-                        setState(() {
-                          _categories.removeLast();
-                          _categories.add(
-                            CategoryModel(id: 0, name: "LOADING"),
-                          );
+            padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+            child: Container(
+              height: 32,
+              width: MediaQuery.of(context).size.width,
+              child: ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  itemCount: _categories.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: index == _categories.length - 1
+                          ? EdgeInsets.all(0)
+                          : EdgeInsets.only(right: 8),
+                      child: ButtonTheme(
+                        buttonColor: _categories[index].name == "RELOAD"
+                            ? Colors.redAccent
+                            : _categories[index].name == "LOADING" ||
+                                    index == position
+                                ? MyColors.bluePrimary
+                                : MyColors.yellowSecond,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minWidth: 0,
+                        height: 0,
+                        child: RaisedButton(
+                          onPressed: () {
+                            if (_categories[index].name == "RELOAD") {
+                              setState(() {
+                                _categories.removeLast();
+                                _categories.add(
+                                  CategoryModel(id: 0, name: "LOADING"),
+                                );
 
-                          _presenter.getCategories();
-                        });
-                      } else if (_categories[index].name != "LOADING") {
-                        setState(() {
-                          _page = 1;
-                          _refreshController.loadComplete();
-                          position = index;
-                          _presenter.getPosts(
-                              catID: _categories[index].id);
-                        });
-                      }
-                    },
-                    child: _categories[index].name != "LOADING"
-                        ? Text(
-                      "#${_categories[index].name.toUpperCase()}",
-                      style: TextStyle(
-                          color:
-                          _categories[index].name == "RELOAD" ||
-                              _categories[index].name ==
-                                  "LOADING" ||
-                              index == position
-                              ? Colors.white
-                              : Colors.black,
-                          fontSize: 12),
-                    )
-                        : SizedBox(
-                      width: 8,
-                      height: 8,
-                      child: CircularProgressIndicator(
-                        backgroundColor: MyColors.bluePrimary,
-                        valueColor: AlwaysStoppedAnimation(
-                            MyColors.yellowSecond),
+                                _presenter.getCategories();
+                              });
+                            } else if (_categories[index].name != "LOADING") {
+                              setState(() {
+                                _page = 1;
+                                _refreshController.loadComplete();
+                                position = index;
+                                _presenter.getPosts(
+                                    catID: _categories[index].id);
+                              });
+                            }
+                          },
+                          child: _categories[index].name != "LOADING"
+                              ? Text(
+                                  "#${_categories[index].name.toUpperCase()}",
+                                  style: TextStyle(
+                                      color:
+                                          _categories[index].name == "RELOAD" ||
+                                                  _categories[index].name ==
+                                                      "LOADING" ||
+                                                  index == position
+                                              ? Colors.white
+                                              : Colors.black,
+                                      fontSize: 12),
+                                )
+                              : SizedBox(
+                                  width: 8,
+                                  height: 8,
+                                  child: CircularProgressIndicator(
+                                    backgroundColor: MyColors.bluePrimary,
+                                    valueColor: AlwaysStoppedAnimation(
+                                        MyColors.yellowSecond),
+                                  ),
+                                ),
+                        ), //your original button
                       ),
-                    ),
-                  ), //your original button
-                ),
-              );
-            }),
-      ),
-    );
+                    );
+                  }),
+            ),
+          );
   }
 
   _postsBody(BuildContext context) {
@@ -418,29 +415,32 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   }
 
   _errorBody(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 3,
-          child: Text(
-            errorMessage ?? "Unknowen Error",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Text(
+              errorMessage ?? "Unknowen Error",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.red, fontSize: 16),
+            ),
           ),
-        ),
-        Expanded(
-          flex: 1,
-          child: FlatButton(
-            color: MyColors.yellowSecond,
-            onPressed: () {
-              _presenter.getPosts(
-                  catID: _categories[position].id, searchText: searchText);
-              isError = false;
-            },
-            child: Text("Refresh"),
+          Expanded(
+            flex: 1,
+            child: FlatButton(
+              color: MyColors.yellowSecond,
+              onPressed: () {
+                _presenter.getPosts(
+                    catID: _categories[position].id, searchText: searchText);
+                isError = false;
+              },
+              child: Text("Refresh"),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
