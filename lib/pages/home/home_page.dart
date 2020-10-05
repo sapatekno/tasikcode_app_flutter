@@ -26,6 +26,8 @@ class _HomePageState extends BaseState<HomePage, HomePresenter> {
     BarayaPage(),
   ];
 
+  bool isNotifClicked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,9 +73,23 @@ class _HomePageState extends BaseState<HomePage, HomePresenter> {
             color: MyColors.bluePrimary,
           ),
           onPressed: () {
-            showAlert(
+            if (!isNotifClicked) {
+              setState(() {
+                isNotifClicked = true;
+              });
+
+              showAlert(
                 message: "Belum ada notifikasi terbaru",
-                color: MyColors.bluePrimary);
+                iconData: Icons.info_outline,
+                primaryColor: MyColors.bluePrimary,
+                secondaryColor: MyColors.yellowSecond,
+                onDismissed: () {
+                  setState(() {
+                    isNotifClicked = false;
+                  });
+                },
+              );
+            }
           },
         )
       ],

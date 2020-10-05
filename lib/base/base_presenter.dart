@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 abstract class BaseContract {
   void sampleAbstract();
 
-  void showAlert({String message, Color color});
+  void showAlert({String message, Color primaryColor, Color secondaryColor});
 }
 
 abstract class BasePresenter<T extends BaseContract> {

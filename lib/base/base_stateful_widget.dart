@@ -12,12 +12,36 @@ abstract class BaseState<T extends BaseStatefulWidget, R extends BasePresenter>
   }
 
   @override
-  void showAlert({String message, Color color}) {
+  void showAlert(
+      {String message,
+      Color primaryColor,
+      Color secondaryColor,
+      IconData iconData,
+      onDismissed}) {
     Flushbar(
+      backgroundColor: primaryColor,
+      duration: Duration(seconds: 2),
       flushbarPosition: FlushbarPosition.BOTTOM,
+      icon: Icon(
+        iconData,
+        color: secondaryColor,
+      ),
+      leftBarIndicatorColor: secondaryColor,
       message: message,
-      backgroundColor: color,
-      duration: Duration(seconds: 3),
+      margin: EdgeInsets.all(16),
+      onStatusChanged: (FlushbarStatus status) {
+        switch (status) {
+          case FlushbarStatus.SHOWING:
+            break;
+          case FlushbarStatus.DISMISSED:
+            onDismissed();
+            break;
+          case FlushbarStatus.IS_APPEARING:
+            break;
+          case FlushbarStatus.IS_HIDING:
+            break;
+        }
+      },
     ).show(context);
   }
 }

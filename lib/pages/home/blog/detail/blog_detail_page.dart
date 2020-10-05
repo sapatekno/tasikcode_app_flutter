@@ -35,6 +35,7 @@ class _BlogDetailPageState
     implements BlogDetailContract {
   PostModel postData;
   String dateFormatted;
+  bool isNotifClicked = false;
 
   @override
   void initState() {
@@ -89,9 +90,23 @@ class _BlogDetailPageState
             color: MyColors.bluePrimary,
           ),
           onPressed: () {
-            showAlert(
+            if (!isNotifClicked) {
+              setState(() {
+                isNotifClicked = true;
+              });
+
+              showAlert(
                 message: "Belum ada notifikasi terbaru",
-                color: MyColors.bluePrimary);
+                iconData: Icons.info_outline,
+                primaryColor: MyColors.bluePrimary,
+                secondaryColor: MyColors.yellowSecond,
+                onDismissed: () {
+                  setState(() {
+                    isNotifClicked = false;
+                  });
+                },
+              );
+            }
           },
         )
       ],
@@ -164,18 +179,17 @@ class _BlogDetailPageState
             featuredImage.isEmpty
                 ? Container()
                 : InkWell(
-              onTap: () => popUpImage(featuredImage),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  fit: BoxFit.fitWidth,
-                  imageUrl: featuredImage,
-                  placeholder: (context, url) =>
-                      Container(
-                          child: Center(
-                              child: CircularProgressIndicator(
-                                backgroundColor: MyColors.bluePrimary,
-                                valueColor:
+                    onTap: () => popUpImage(featuredImage),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.fitWidth,
+                        imageUrl: featuredImage,
+                        placeholder: (context, url) => Container(
+                            child: Center(
+                                child: CircularProgressIndicator(
+                          backgroundColor: MyColors.bluePrimary,
+                          valueColor:
                               AlwaysStoppedAnimation(MyColors.yellowSecond),
                         ))),
                         errorWidget: (context, url, error) => WebsafeSvg.asset(
@@ -221,9 +235,7 @@ class _BlogDetailPageState
     if (status.isGranted) {
       saveImageToGallery(imageUrl);
     } else {
-      showAlert(
-          message: "Tidak dapat menyimpan gambar tanpa akses.",
-          color: Colors.red);
+      showAlert(message: "Tidak dapat menyimpan gambar tanpa akses.");
     }
   }
 
@@ -305,21 +317,18 @@ class _BlogDetailPageState
             quality: 90, name: baseName);
 
         Navigator.pop(context);
-        showAlert(
-            message: "Gambar berhasil disimpan", color: MyColors.bluePrimary);
+        showAlert(message: "Gambar berhasil disimpan");
       } catch (error) {
         showAlert(
-            message: "Tidak dapat menyimpan gambar, silahkan coba lagi",
-            color: Colors.red);
+          message: "Tidak dapat menyimpan gambar, silahkan coba lagi",
+        );
       }
     } else if (status.isUndetermined) {
       askStoragePermission(imageUrl);
     } else if (status.isDenied) {
       askStoragePermission(imageUrl);
     } else if (status.isRestricted || status.isPermanentlyDenied) {
-      showAlert(
-          message: "Berikan hak akses untuk penyimpanan",
-          color: MyColors.bluePrimary);
+      showAlert(message: "Berikan hak akses untuk penyimpanan");
       await Future.delayed(Duration(seconds: 2));
       openAppSettings();
     }
