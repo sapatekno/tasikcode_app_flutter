@@ -98,7 +98,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
 
                   setState(() {
                     if (inputValue.isEmpty) {
-                      searchText = "";
+                      clearSearch();
                     } else {
                       searchText = inputValue;
                       _presenter.getPosts(page: 1, searchText: searchText);
@@ -115,19 +115,13 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
             ),
             searchText.isNotEmpty
                 ? IconButton(
-                    icon: Icon(
-                      FontAwesome.close,
-                      color: Colors.red,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _searchTextController.text = "";
-                        searchText = "";
-                        _presenter.getPosts(catID: _categories[position].id);
-                      });
-                    },
-                  )
+              icon: Icon(
+                FontAwesome.close,
+                color: Colors.red,
+                size: 20,
+              ),
+              onPressed: () => clearSearch(),
+            )
                 : Container(),
           ],
         ),
@@ -138,101 +132,104 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   _categoriesBody(BuildContext context) {
     return searchText.isNotEmpty
         ? Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: ButtonTheme(
+            buttonColor: MyColors.bluePrimary,
+            padding:
+            EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minWidth: 0,
+            height: 32,
+            child: RaisedButton(
+              onPressed: () {},
+              child: Text(
+                "#PENCARIAN",
+                style: TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ), //your original button
+          ),
+        ),
+      ],
+    )
+        : Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+      child: Container(
+        height: 32,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        child: ListView.builder(
+            primary: false,
+            shrinkWrap: true,
+            itemCount: _categories.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: index == _categories.length - 1
+                    ? EdgeInsets.all(0)
+                    : EdgeInsets.only(right: 8),
                 child: ButtonTheme(
-                  buttonColor: MyColors.bluePrimary,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  buttonColor: _categories[index].name == "RELOAD"
+                      ? Colors.redAccent
+                      : _categories[index].name == "LOADING" ||
+                      index == position
+                      ? MyColors.bluePrimary
+                      : MyColors.yellowSecond,
+                  padding: EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   minWidth: 0,
-                  height: 32,
+                  height: 0,
                   child: RaisedButton(
-                    onPressed: () {},
-                    child: Text(
-                      "#PENCARIAN",
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
+                    onPressed: () {
+                      if (_categories[index].name == "RELOAD") {
+                        setState(() {
+                          _categories.removeLast();
+                          _categories
+                              .add(CategoryModel(id: 0, name: "LOADING"));
+
+                          _presenter.getCategories();
+                        });
+                      } else if (_categories[index].name != "LOADING") {
+                        setState(() {
+                          _page = 1;
+                          _refreshController.loadComplete();
+                          position = index;
+                          _presenter.getPosts(
+                              catID: _categories[index].id);
+                        });
+                      }
+                    },
+                    child: _categories[index].name != "LOADING"
+                        ? Text(
+                      "#${_categories[index].name.toUpperCase()}",
+                      style: TextStyle(
+                          color:
+                          _categories[index].name == "RELOAD" ||
+                              _categories[index].name ==
+                                  "LOADING" ||
+                              index == position
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12),
+                    )
+                        : SizedBox(
+                        width: 8,
+                        height: 8,
+                        child: CircularProgressIndicator(
+                          backgroundColor: MyColors.bluePrimary,
+                          valueColor: AlwaysStoppedAnimation(
+                              MyColors.yellowSecond),
+                        )),
                   ), //your original button
                 ),
-              ),
-            ],
-          )
-        : Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
-            child: Container(
-              height: 32,
-              width: MediaQuery.of(context).size.width,
-              child: ListView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  itemCount: _categories.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: index == _categories.length - 1
-                          ? EdgeInsets.all(0)
-                          : EdgeInsets.only(right: 8),
-                      child: ButtonTheme(
-                        buttonColor: _categories[index].name == "RELOAD"
-                            ? Colors.redAccent
-                            : _categories[index].name == "LOADING" ||
-                                    index == position
-                                ? MyColors.bluePrimary
-                                : MyColors.yellowSecond,
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minWidth: 0,
-                        height: 0,
-                        child: RaisedButton(
-                          onPressed: () {
-                            if (_categories[index].name == "RELOAD") {
-                              setState(() {
-                                _categories.removeLast();
-                                _categories
-                                    .add(CategoryModel(id: 0, name: "LOADING"));
-
-                                _presenter.getCategories();
-                              });
-                            } else if (_categories[index].name != "LOADING") {
-                              setState(() {
-                                _page = 1;
-                                _refreshController.loadComplete();
-                                position = index;
-                                _presenter.getPosts(
-                                    catID: _categories[index].id);
-                              });
-                            }
-                          },
-                          child: _categories[index].name != "LOADING"
-                              ? Text(
-                                  "#${_categories[index].name.toUpperCase()}",
-                                  style: TextStyle(
-                                      color:
-                                          _categories[index].name == "RELOAD" ||
-                                                  _categories[index].name ==
-                                                      "LOADING" ||
-                                                  index == position
-                                              ? Colors.white
-                                              : Colors.black,
-                                      fontSize: 12),
-                                )
-                              : SizedBox(
-                                  width: 8,
-                                  height: 8,
-                                  child: CircularProgressIndicator(
-                                    backgroundColor: MyColors.bluePrimary,
-                                    valueColor: AlwaysStoppedAnimation(
-                                        MyColors.yellowSecond),
-                                  )),
-                        ), //your original button
-                      ),
-                    );
-                  }),
-            ),
-          );
+              );
+            }),
+      ),
+    );
   }
 
   _postsBody(BuildContext context) {
@@ -249,26 +246,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
         enablePullDown: true,
         enablePullUp: true,
         header: ClassicHeader(),
-        footer: CustomFooter(
-          builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
-            } else if (mode == LoadStatus.loading) {
-              body = CupertinoActivityIndicator();
-            } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("release to load more");
-            } else {
-              body = Text("No more Data");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child: body),
-            );
-          },
-        ),
+        footer: ClassicFooter(),
         controller: _refreshController,
         onRefresh: onRefresh,
         onLoading: onLoading,
@@ -487,6 +465,7 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
       }
 
       _posts.addAll(posts);
+      // * Test add Shimmer
       setLoading(false);
 
       if (isRefresh) {
@@ -539,5 +518,13 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
     } else {
       _refreshController.loadNoData();
     }
+  }
+
+  clearSearch() {
+    setState(() {
+      _searchTextController.text = "";
+      searchText = "";
+      _presenter.getPosts(catID: _categories[position].id);
+    });
   }
 }

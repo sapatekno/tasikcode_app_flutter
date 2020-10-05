@@ -54,11 +54,13 @@ class BlogPresenter extends BasePresenter {
 
     String url =
         "http://blog.tasikcode.xyz/wp-json/wp/v2/posts?per_page=5&_embed&page=$page" +
-            (catID != 0
-                ? "&categories=$catID"
-                : searchText.isEmpty
-                ? ""
-                : "&search=$searchText");
+            (searchText.isNotEmpty
+                ? "&search=$searchText"
+                : catID != 0
+                    ? "&categories=$catID"
+                    : "");
+
+    print("cek url : $url");
 
     final response = await http.get(url).catchError((error) {
       _view.showErrorPost("Gagal mengambil data.");
