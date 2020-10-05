@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_page.dart';
@@ -190,12 +191,12 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
                                   height: 64,
                                   child: Center(
                                     child: CircularProgressIndicator(
-                                          backgroundColor: MyColors.bluePrimary,
-                                          valueColor: AlwaysStoppedAnimation(
-                                              MyColors.yellowSecond),
-                                        ),
-                                      ),
+                                      backgroundColor: MyColors.bluePrimary,
+                                      valueColor: AlwaysStoppedAnimation(
+                                          MyColors.yellowSecond),
                                     ),
+                                  ),
+                                ),
                                 errorWidget: (context, url, error) =>
                                     WebsafeSvg.asset(
                                         MyApps.pathAssetsImages(
@@ -288,14 +289,101 @@ class _DashboardPageState extends BaseState<DashboardPage, DashboardPresenter>
             ),
           );
         } else {
-          childData = Padding(
-            padding: EdgeInsets.all(16),
-            child: Center(
-              child: CircularProgressIndicator(
-                backgroundColor: MyColors.bluePrimary,
-                valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
+          List<Widget> postsPlaceholder = [];
+
+          for (int i = 0; i < 3; i++) {
+            Widget post = Padding(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: SizedBox(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        height: 110,
+                        child: Shimmer.fromColors(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          baseColor: Colors.grey[100],
+                          highlightColor: Colors.grey[300],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 24),
+                            child: SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width,
+                              height: 28,
+                              child: Shimmer.fromColors(
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(0),
+                                  ),
+                                ),
+                                baseColor: Colors.grey[100],
+                                highlightColor: Colors.grey[300],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 120,
+                            height: 28,
+                            child: Shimmer.fromColors(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                              baseColor: Colors.grey[100],
+                              highlightColor: Colors.grey[300],
+                            ),
+                          ),
+                          SizedBox(
+                            width: 90,
+                            height: 28,
+                            child: Shimmer.fromColors(
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0),
+                                ),
+                              ),
+                              baseColor: Colors.grey[100],
+                              highlightColor: Colors.grey[300],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+            );
+            postsPlaceholder.add(post);
+          }
+
+          childData = Column(
+            children: postsPlaceholder,
           );
         }
 

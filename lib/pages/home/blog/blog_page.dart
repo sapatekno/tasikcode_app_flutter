@@ -5,6 +5,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/category_model.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
@@ -115,13 +116,13 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
             ),
             searchText.isNotEmpty
                 ? IconButton(
-              icon: Icon(
-                FontAwesome.close,
-                color: Colors.red,
-                size: 20,
-              ),
-              onPressed: () => clearSearch(),
-            )
+                    icon: Icon(
+                      FontAwesome.close,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onPressed: () => clearSearch(),
+                  )
                 : Container(),
           ],
         ),
@@ -426,17 +427,100 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
   }
 
   _loadingBody(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Center(
-          child: CircularProgressIndicator(
-            backgroundColor: MyColors.bluePrimary,
-            valueColor: AlwaysStoppedAnimation(MyColors.yellowSecond),
-          ),
+    List<Widget> postsPlaceholder = [];
+
+    for (int i = 0; i < 3; i++) {
+      Widget post = Padding(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: SizedBox(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  height: 110,
+                  child: Shimmer.fromColors(
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    baseColor: Colors.grey[100],
+                    highlightColor: Colors.grey[300],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 24),
+                      child: SizedBox(
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        height: 28,
+                        child: Shimmer.fromColors(
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                          ),
+                          baseColor: Colors.grey[100],
+                          highlightColor: Colors.grey[300],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 120,
+                      height: 28,
+                      child: Shimmer.fromColors(
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                        ),
+                        baseColor: Colors.grey[100],
+                        highlightColor: Colors.grey[300],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 90,
+                      height: 28,
+                      child: Shimmer.fromColors(
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                        ),
+                        baseColor: Colors.grey[100],
+                        highlightColor: Colors.grey[300],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
+      postsPlaceholder.add(post);
+    }
+
+    return Column(children: postsPlaceholder,);
   }
 
   @override
@@ -465,7 +549,6 @@ class _BlogPageState extends BaseState<BlogPage, BlogPresenter>
       }
 
       _posts.addAll(posts);
-      // * Test add Shimmer
       setLoading(false);
 
       if (isRefresh) {
