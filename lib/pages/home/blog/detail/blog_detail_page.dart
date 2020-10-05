@@ -15,6 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
 import 'package:tasikcode_app_flutter/model/post_model.dart';
+import 'package:tasikcode_app_flutter/pages/about/about_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/detail/blog_detail_presenter.dart';
 import 'package:tasikcode_app_flutter/utils/my_app.dart';
 import 'package:tasikcode_app_flutter/utils/my_colors.dart';
@@ -63,8 +64,36 @@ class _BlogDetailPageState
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 8.0),
-            child: WebsafeSvg.asset(
-              MyApps.pathAssetsImages("tcode_logo_small.svg"),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    transitionDuration: Duration(milliseconds: 1000),
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return AboutPage();
+                    },
+                    transitionsBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child) {
+                      return Align(
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Hero(
+                tag: 'image',
+                child: WebsafeSvg.asset(
+                  MyApps.pathAssetsImages("tcode_logo_small.svg"),
+                ),
+              ),
             ),
           ),
           Text(

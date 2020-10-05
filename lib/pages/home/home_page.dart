@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
+import 'package:tasikcode_app_flutter/pages/about/about_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/baraya/baraya_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/blog/blog_page.dart';
 import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
@@ -45,8 +46,36 @@ class _HomePageState extends BaseState<HomePage, HomePresenter> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 8.0),
-            child: WebsafeSvg.asset(
-              MyApps.pathAssetsImages("tcode_logo_small.svg"),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    transitionDuration: Duration(milliseconds: 1000),
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return AboutPage();
+                    },
+                    transitionsBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child) {
+                      return Align(
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Hero(
+                tag: 'image',
+                child: WebsafeSvg.asset(
+                  MyApps.pathAssetsImages("tcode_logo_small.svg"),
+                ),
+              ),
             ),
           ),
           Text(
