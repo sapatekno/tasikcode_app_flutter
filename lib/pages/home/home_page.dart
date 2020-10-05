@@ -1,0 +1,157 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:tasikcode_app_flutter/base/base_stateful_widget.dart';
+import 'package:tasikcode_app_flutter/pages/about/about_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/baraya/baraya_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/blog/blog_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/dashboard/dashboard_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/event/event_page.dart';
+import 'package:tasikcode_app_flutter/pages/home/home_presenter.dart';
+import 'package:tasikcode_app_flutter/utils/my_app.dart';
+import 'package:tasikcode_app_flutter/utils/my_colors.dart';
+import 'package:websafe_svg/websafe_svg.dart';
+
+class HomePage extends BaseStatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends BaseState<HomePage, HomePresenter> {
+  int _selectedIndex = 0;
+
+  List<Widget> _widgetOptions = <Widget>[
+    DashboardPage(),
+    BlogPage(),
+    EventPage(),
+    BarayaPage(),
+  ];
+
+  bool isNotifClicked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: _appBar(context),
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: _bottomNavigationBar(context),
+    );
+  }
+
+  _appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: Row(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  PageRouteBuilder(
+                    transitionDuration: Duration(milliseconds: 1000),
+                    pageBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation) {
+                      return AboutPage();
+                    },
+                    transitionsBuilder: (BuildContext context,
+                        Animation<double> animation,
+                        Animation<double> secondaryAnimation,
+                        Widget child) {
+                      return Align(
+                        child: FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: Hero(
+                tag: 'image',
+                child: WebsafeSvg.asset(
+                  MyApps.pathAssetsImages("tcode_logo_small.svg"),
+                ),
+              ),
+            ),
+          ),
+          Text(
+            "Tasik",
+            style: GoogleFonts.rubik(
+              fontWeight: FontWeight.w600,
+              color: MyColors.bluePrimary,
+            ),
+          ),
+          Text(
+            "code",
+            style: GoogleFonts.rubik(
+              fontWeight: FontWeight.w600,
+              color: MyColors.yellowSecond,
+            ),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        IconButton(
+          tooltip: "Notifikasi",
+          icon: Icon(
+            FontAwesome.bell_o,
+            color: MyColors.bluePrimary,
+          ),
+          onPressed: () {
+            if (!isNotifClicked) {
+              setState(() {
+                isNotifClicked = true;
+              });
+
+              showAlert(
+                message: "Belum ada notifikasi terbaru",
+                iconData: Icons.info_outline,
+                primaryColor: MyColors.bluePrimary,
+                secondaryColor: MyColors.yellowSecond,
+                onDismissed: () {
+                  setState(() {
+                    isNotifClicked = false;
+                  });
+                },
+              );
+            }
+          },
+        )
+      ],
+    );
+  }
+
+  _bottomNavigationBar(BuildContext context) {
+    TextStyle _labelStyle = GoogleFonts.montserrat();
+
+    return BottomNavigationBar(
+      selectedLabelStyle: _labelStyle,
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: MyColors.bluePrimary,
+      unselectedItemColor: MyColors.grey,
+      currentIndex: _selectedIndex,
+      onTap: onItemTapped,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(FontAwesome.home),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(
+            icon: Icon(FontAwesome.newspaper_o), label: "Blog"),
+        BottomNavigationBarItem(
+            icon: Icon(FontAwesome.calendar_o), label: "Event"),
+        BottomNavigationBarItem(icon: Icon(FontAwesome.users), label: "Baraya"),
+      ],
+    );
+  }
+
+  onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}

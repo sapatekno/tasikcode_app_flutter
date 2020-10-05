@@ -1,16 +1,42 @@
-# tasikcode_app_flutter
+# TasikCode Mobile Apps
 
-Mobile Apps for TasikCode Community
+Aplikasi Mobile Untuk Komunitas TasikCode menggunakan Flutter SDK
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Projek ini menggunakan Flutter SDK.
 
-A few resources to get you started if this is your first Flutter project:
+Beberapa Catatan aplikasi ini :
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+1. Menggunakan Flutter SDK Stable versi 1.22.0
+2. Silahkan di fork dan update sesuka hati
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Fitur yang belum ada
+
+1. Event Page
+2. Baraya Page (Masih WebView)
+
+
+## Release
+
+v1.0.0 pre - 2 Oktober 2020
+
+    - initial Release
+
+v.1.10 - 5 Oktober 2020
+
+    Android Side :
+    - Minimum Android API 21 (Android 5.0)
+    - Build API 30 (Android 11)
+    - Fixed app to always portrait
+    - Add Permission Storage (For Save Image)
+
+    App Side :
+    - First Stable Release
+    - Update layout & animation
+    - Pagination & Refresh for Blog
+    - Search for Blog
+    - Add static image on Dashboard
+    - Fixed css on Blog detail
+    - Load thumbnail blog if available
+    - Fix external link on Baraya Page
