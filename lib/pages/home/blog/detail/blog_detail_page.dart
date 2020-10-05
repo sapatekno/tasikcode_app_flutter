@@ -36,6 +36,7 @@ class _BlogDetailPageState
   PostModel postData;
   String dateFormatted;
   bool isNotifClicked = false;
+  bool isSaveButtonClicked = false;
 
   @override
   void initState() {
@@ -186,12 +187,14 @@ class _BlogDetailPageState
                         fit: BoxFit.fitWidth,
                         imageUrl: featuredImage,
                         placeholder: (context, url) => Container(
-                            child: Center(
-                                child: CircularProgressIndicator(
-                          backgroundColor: MyColors.bluePrimary,
-                          valueColor:
-                              AlwaysStoppedAnimation(MyColors.yellowSecond),
-                        ))),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              backgroundColor: MyColors.bluePrimary,
+                              valueColor:
+                                  AlwaysStoppedAnimation(MyColors.yellowSecond),
+                            ),
+                          ),
+                        ),
                         errorWidget: (context, url, error) => WebsafeSvg.asset(
                           MyApps.pathAssetsImages("img_placeholder_large.svg"),
                           fit: BoxFit.fitWidth,
@@ -235,7 +238,16 @@ class _BlogDetailPageState
     if (status.isGranted) {
       saveImageToGallery(imageUrl);
     } else {
-      showAlert(message: "Tidak dapat menyimpan gambar tanpa akses.");
+      Navigator.of(context).pop();
+      setState(() {
+        isSaveButtonClicked = false;
+      });
+      showAlert(
+        message: "Akses penyimpanan ditolak",
+        primaryColor: Colors.red,
+        secondaryColor: MyColors.bluePrimary,
+        iconData: Icons.error_outline,
+      );
     }
   }
 
@@ -285,8 +297,24 @@ class _BlogDetailPageState
                     children: [
                       FlatButton(
                         color: MyColors.yellowSecond,
-                        onPressed: () => saveImageToGallery(imageUrl),
-                        child: Text("Simpan ke Galeri"),
+                        disabledColor: Colors.grey,
+                        onPressed: isSaveButtonClicked
+                            ? null
+                            : () {
+                          setState(() => isSaveButtonClicked = true);
+                          saveImageToGallery(imageUrl);
+                        },
+                        child: isSaveButtonClicked
+                            ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            backgroundColor: MyColors.bluePrimary,
+                            valueColor: AlwaysStoppedAnimation(
+                                MyColors.yellowSecond),
+                          ),
+                        )
+                            : Text("Simpan ke Galeri"),
                       ),
                     ],
                   ),
@@ -317,10 +345,30 @@ class _BlogDetailPageState
             quality: 90, name: baseName);
 
         Navigator.pop(context);
-        showAlert(message: "Gambar berhasil disimpan");
-      } catch (error) {
+
+        setState(() {
+          isSaveButtonClicked = false;
+        });
+
         showAlert(
-          message: "Tidak dapat menyimpan gambar, silahkan coba lagi",
+          message: "Gambar berhasil disimpan",
+          primaryColor: MyColors.bluePrimary,
+          secondaryColor: MyColors.yellowSecond,
+          iconData: Icons.check_circle_outline,
+          onDismissed: () {},
+        );
+      } catch (error) {
+        Navigator.pop(context);
+
+        setState(() {
+          isSaveButtonClicked = false;
+        });
+
+        showAlert(
+          message: "Gagal menyimpan gambar",
+          primaryColor: Colors.red,
+          secondaryColor: MyColors.bluePrimary,
+          iconData: Icons.error_outline,
         );
       }
     } else if (status.isUndetermined) {
@@ -328,7 +376,17 @@ class _BlogDetailPageState
     } else if (status.isDenied) {
       askStoragePermission(imageUrl);
     } else if (status.isRestricted || status.isPermanentlyDenied) {
-      showAlert(message: "Berikan hak akses untuk penyimpanan");
+      Navigator.pop(context);
+
+      setState(() {
+        isSaveButtonClicked = false;
+      });
+
+      showAlert(
+          message: "Berikan hak akses penyimpanan",
+          primaryColor: MyColors.bluePrimary,
+          secondaryColor: MyColors.yellowSecond,
+          iconData: Icons.info_outline);
       await Future.delayed(Duration(seconds: 2));
       openAppSettings();
     }
